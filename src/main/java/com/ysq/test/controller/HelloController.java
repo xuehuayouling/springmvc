@@ -31,4 +31,13 @@ public class HelloController {
 		mv.setViewName("hello");
 		return mv;
 	}
+	
+	@RequestMapping(value = "/json", method = RequestMethod.GET)
+	public ModelAndView jsonString() {
+		String jsonStr = service.userListToJson();
+		ModelAndView mv = new ModelAndView();
+		mv.addObject("message", jsonStr);
+		mv.setViewName("hello");
+		return mv;
+	}
 }
