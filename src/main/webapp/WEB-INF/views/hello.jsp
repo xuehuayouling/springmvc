@@ -7,6 +7,6 @@
     <title>Title</title>
 </head>
 <body>
-	你好${user.getName() }
+	你好${message}
 </body>
 </html>
