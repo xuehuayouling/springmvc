@@ -12,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.ysq.test.entity.OutputDTO;
 import com.ysq.test.service.UserService;
 import com.ysq.test.util.JsonUtil;
+import com.ysq.test.util.ValidVerifyUtil;
 
 @Controller
 @RequestMapping("/login")
@@ -19,6 +20,14 @@ public class LoginController {
 	@Resource(name = "userService")
 	private UserService service;
 
+	@RequestMapping(value = "/test", method = RequestMethod.GET)
+	public ModelAndView count() {
+		ModelAndView mv = new ModelAndView();
+		mv.addObject("message", "test success");
+		mv.setViewName("hello");
+		return mv;
+	}
+	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	@ResponseBody
 	public String validPost(@RequestParam(value = "password") String password,
@@ -33,20 +42,12 @@ public class LoginController {
 		return tryLogin(name, password);
 	}
 	
-	@RequestMapping(value = "/count", method = RequestMethod.GET)
-	public ModelAndView count() {
-		ModelAndView mv = new ModelAndView();
-		mv.addObject("message", "test success");
-		mv.setViewName("hello");
-		return mv;
-	}
-	
 	private String tryLogin(String name, String password) {
 		OutputDTO dto = new OutputDTO();
 		try {
 			boolean isSuccess = service.login(name, password);
 			if (isSuccess) {
-				dto.setResult("success");
+				dto.setResult(ValidVerifyUtil.getSessionID(name));
 			} else {
 				dto.setSuccess(0);
 				dto.setErrmsg("用户名或密码不对");
