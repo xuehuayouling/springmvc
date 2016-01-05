@@ -21,4 +21,12 @@ public class UserService {
 	public String userListToJson() {
 		return JSON.toJSONString(userDao.getAllUser());
 	}
+	
+	public boolean loginSuccess() {
+		return userDao.getAllUser().size() > 0;
+	}
+	
+	public boolean login(String name, String password) {
+		return userDao.login(name, password);
+	}
 }
