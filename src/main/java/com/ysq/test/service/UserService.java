@@ -14,10 +14,10 @@ public class UserService {
 		this.userDao = userDao;
 	}
 
-	public User login(String name, String password) {
+	public User login(String name, String password, String sessionID) {
 		User user = findUser(name, password);
 		if (user != null) {
-			return addToken(user);
+			return addToken(user, sessionID);
 		}
 		return null;
 	}
@@ -26,7 +26,11 @@ public class UserService {
 		return userDao.findUser(name, password);
 	}
 
-	private User addToken(User user) {
-		return userDao.addToken(user);
+	private User addToken(User user, String sessionID) {
+		return userDao.addToken(user, sessionID);
+	}
+
+	public User findUserByAccessToken(String token) {
+		return userDao.findUserByAccessToken(token);
 	}
 }

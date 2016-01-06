@@ -1,6 +1,7 @@
 package com.ysq.test.controller;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,21 +32,21 @@ public class LoginController {
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	@ResponseBody
 	public String validPost(@RequestParam(value = "name") String name,
-			@RequestParam(value = "password") String password) {
-		return tryLogin(name, password);
+			@RequestParam(value = "password") String password, HttpServletRequest request) {
+		return tryLogin(name, password, request.getSession().getId());
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	@ResponseBody
 	public String validGet(@RequestParam(value = "name") String name,
-			@RequestParam(value = "password") String password) {
-		return tryLogin(name, password);
+			@RequestParam(value = "password") String password, HttpServletRequest request) {
+		return tryLogin(name, password, request.getSession().getId());
 	}
 
-	private String tryLogin(String name, String password) {
+	private String tryLogin(String name, String password, String sessionID) {
 		OutputDTO dto = new OutputDTO();
 		try {
-			final User user = service.login(name, password);
+			final User user = service.login(name, password, sessionID);
 			boolean isSuccess = user != null;
 			if (isSuccess) {
 				dto.setResult(user.getToken());

@@ -7,7 +7,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 import com.ysq.test.entity.User;
-import com.ysq.test.util.ValidVerifyUtil;
+import com.ysq.test.util.SessionContext;
+import com.ysq.test.util.TextUtil;
 
 public class UserDAO {
 
@@ -22,25 +23,40 @@ public class UserDAO {
 	}
 
 	public User findUser(String name, String password) {
+		if (TextUtil.isEmpty(name) || TextUtil.isEmpty(password)) {
+			return null;
+		}
 		String sql = "from user where name=%s and password=%s";
 		sql = String.format(sql, name, password);
-		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery(sql);
-		if (query.list().size() > 0) {
-			User user = (User) query.list().get(0);
+		return queryUserBySql(sql);
+	}
+	
+	public User addToken(User user, String sessionID) {
+		if (user != null) {
+			Session session = sessionFactory.getCurrentSession();
+			user.setToken(sessionID);
+			session.saveOrUpdate(user);
+			session.flush();
+			session.clear();
 			return user;
 		}
 		return null;
 	}
 
-	public User addToken(User user) {
-		if (user != null) {
-			Session session = sessionFactory.getCurrentSession();
-			String token = String.valueOf(ValidVerifyUtil.getSessionID(user.getName()));
-			user.setToken(token);
-			session.saveOrUpdate(user);
-			session.flush();
-			session.clear();
+	public User findUserByAccessToken(String token) {
+		if (TextUtil.isEmpty(token)) {
+			return null;
+		}
+		String sql = "from user where token=%s";
+		sql = String.format(sql, token);
+		return queryUserBySql(sql);
+	}
+	
+	private User queryUserBySql(String sql) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery(sql);
+		if (query.list().size() > 0) {
+			User user = (User) query.list().get(0);
 			return user;
 		}
 		return null;
