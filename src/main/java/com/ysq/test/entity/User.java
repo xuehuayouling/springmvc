@@ -13,7 +13,7 @@ public class User {
 	private int id;
 	private String name;
 	private String password;
-
+	private String token;
 	@Column(name = "name", nullable = false)
 	public String getName() {
 		return name;
@@ -42,6 +42,15 @@ public class User {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	@Column(name = "token")
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 
 }

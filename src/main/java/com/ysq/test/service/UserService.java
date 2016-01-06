@@ -1,11 +1,11 @@
 package com.ysq.test.service;
 
-import com.alibaba.fastjson.JSON;
 import com.ysq.test.dao.UserDAO;
+import com.ysq.test.entity.User;
 
 public class UserService {
 	private UserDAO userDao;
-	
+
 	public UserDAO getUserDao() {
 		return userDao;
 	}
@@ -14,19 +14,19 @@ public class UserService {
 		this.userDao = userDao;
 	}
 
-	public int userCount(){
-		return userDao.getAllUser().size();
+	public User login(String name, String password) {
+		User user = findUser(name, password);
+		if (user != null) {
+			return addToken(user);
+		}
+		return null;
 	}
 
-	public String userListToJson() {
-		return JSON.toJSONString(userDao.getAllUser());
+	private User findUser(String name, String password) {
+		return userDao.findUser(name, password);
 	}
-	
-	public boolean loginSuccess() {
-		return userDao.getAllUser().size() > 0;
-	}
-	
-	public boolean login(String name, String password) {
-		return userDao.login(name, password);
+
+	private User addToken(User user) {
+		return userDao.addToken(user);
 	}
 }

@@ -61,9 +61,10 @@
    <!--  声明式容器事务管理 ,transaction-manager指定事务管理器为transactionManager -->
 	<tx:advice id="txAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
-			<tx:method name="add*" propagation="REQUIRED" />
-			<tx:method name="get*" propagation="REQUIRED" />
-			<tx:method name="*" read-only="true" />
+			<tx:method name="find*" read-only="true" />
+			
+			<!-- TIMEOUT -->
+			<tx:method name="*" propagation="REQUIRED" timeout="300" />
 		</tx:attributes>
 	</tx:advice>
 	
