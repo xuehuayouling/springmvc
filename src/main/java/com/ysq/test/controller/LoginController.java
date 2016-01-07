@@ -25,7 +25,7 @@ public class LoginController {
 	public ModelAndView count() {
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("message", "test success");
-		mv.setViewName("hello");
+		mv.setViewName("login");
 		return mv;
 	}
 

@@ -26,7 +26,7 @@ public class UserDAO {
 		if (TextUtil.isEmpty(name) || TextUtil.isEmpty(password)) {
 			return null;
 		}
-		String sql = "from user where name=%s and password=%s";
+		String sql = "from user where name='%s' and password='%s'";
 		sql = String.format(sql, name, password);
 		return queryUserBySql(sql);
 	}
@@ -47,7 +47,7 @@ public class UserDAO {
 		if (TextUtil.isEmpty(token)) {
 			return null;
 		}
-		String sql = "from user where token=%s";
+		String sql = "from user where token='%s'";
 		sql = String.format(sql, token);
 		return queryUserBySql(sql);
 	}
