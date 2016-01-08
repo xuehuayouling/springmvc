@@ -41,6 +41,7 @@ public class PartOfSpeechDAO {
 		if (TextUtil.isEmpty(name)) {
 			return null;
 		}
+		name = name.replaceAll("'", "''");
 		String sql = "from t_part_of_speech where name='%s'";
 		sql = String.format(sql, name);
 		return queryPartOfSpeechBySql(sql);

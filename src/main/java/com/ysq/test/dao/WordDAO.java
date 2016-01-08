@@ -40,6 +40,7 @@ public class WordDAO {
 		if (TextUtil.isEmpty(name)) {
 			return null;
 		}
+		name = name.replaceAll("'", "''");
 		String sql = "from t_word where name='%s'";
 		sql = String.format(sql, name);
 		return queryWordBySql(sql);

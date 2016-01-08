@@ -40,6 +40,7 @@ public class ExplainDAO {
 		if (TextUtil.isEmpty(content)) {
 			return null;
 		}
+		content = content.replaceAll("'", "''");
 		String sql = "from t_explain where content='%s'";
 		sql = String.format(sql, content);
 		return queryExplainBySql(sql);

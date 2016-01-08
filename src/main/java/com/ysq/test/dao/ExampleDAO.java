@@ -40,6 +40,7 @@ public class ExampleDAO {
 		if (TextUtil.isEmpty(content)) {
 			return null;
 		}
+		content = content.replaceAll("'", "''");
 		String sql = "from t_example where content='%s'";
 		sql = String.format(sql, content);
 		return queryExampleBySql(sql);

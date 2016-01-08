@@ -2,6 +2,7 @@ package com.ysq.test.controller;
 
 import javax.annotation.Resource;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -41,46 +42,65 @@ public class AddWordController {
 	@RequestMapping(value = "/addWord")
 	public ModelAndView count(@RequestParam(value = "name", required = true) String name) {
 		ModelAndView mv = new ModelAndView();
-		String content = "";
-		Word word = wordService.getWord(name);
+		String content = "failure";
 		try {
 			Document document = Jsoup.parse(HttpUtil.getURLContent(BASE_URL + name));
 			Elements elements = document.getElementsByTag("body");
 			Elements definition_main = elements.get(0).getElementsByClass("definition_main");
-			Element definition_content =  definition_main.first().getElementsByAttributeValueContaining("class", "definition_content").first();
-			for (Element e1 : definition_content.children()) {
-				if (e1.id() != null && e1.id().startsWith(name)) {
-					Element definitions_hom_subsec = e1.getElementsByAttributeValueEnding("class", "hom-subsec").first();
-					for (Element e2 : definitions_hom_subsec.children()) {
-						if (e2.id() != null && e2.id().startsWith(name)) {
-							Relationship relationship = new Relationship();
-							PartOfSpeech partOfSpeech = null;
-							Example example = null;
-							Explain explain = null;
-							relationship.setWordID(word.getId());
-							for (Element e3 : e2.children()) {
-								if (e3.className().endsWith("gramGrp h3_entry")) {
-									String partOfSpeechName = e3.getElementsByTag("span").get(0).text();
-									partOfSpeech = partOfSpeechService.getPartOfSpeech(partOfSpeechName.substring(3));
-								} else if (e3.className().endsWith("sense_list level_0")){
-									for(Element e4 : e3.getElementsByTag("span")) {
-										if (e4.className().equals("def")) {
-											explain = explainService.getExplain(e4.text());
-										} else if (e4.className().equals("orth")) {
-											example = exampleService.getExample(e4.text().substring(4));
+			if (!definition_main.isEmpty()) {
+				Element definition_content = definition_main.first()
+						.getElementsByAttributeValueContaining("class", "definition_content").first();
+				for (Element e1 : definition_content.children()) {
+					if (e1.id() != null && e1.id().startsWith(name)) {
+						Element definitions_hom_subsec_for_name = e1.getElementsByAttributeValueEnding("class", "orth h1_entry")
+								.first();
+						String wordName = definitions_hom_subsec_for_name.html();
+						wordName = wordName.substring(0, wordName.indexOf("<span>"));
+						Element definitions_hom_subsec = e1.getElementsByAttributeValueEnding("class", "hom-subsec")
+								.first();
+						for (Element e2 : definitions_hom_subsec.children()) {
+							if (e2.id() != null && e2.id().startsWith(name)) {
+								try {
+									Relationship relationship = new Relationship();
+									PartOfSpeech partOfSpeech = null;
+									Example example = null;
+									Explain explain = null;
+									for (Element e3 : e2.children()) {
+										if (e3.className().endsWith("gramGrp h3_entry")) {
+											String partOfSpeechName = e3.getElementsByTag("span").get(0).text();
+											if (partOfSpeechName.contains(".") && partOfSpeechName.indexOf(".") < 3) {
+												partOfSpeechName = partOfSpeechName
+														.substring(partOfSpeechName.indexOf(".") + 2);
+											}
+											partOfSpeech = partOfSpeechService.getPartOfSpeech(partOfSpeechName);
+										} else if (e3.className().endsWith("sense_list level_0")) {
+											for (Element e4 : e3.getElementsByTag("span")) {
+												if (e4.className().equals("def")) {
+													explain = explainService.getExplain(e4.text());
+												} else if (e4.className().equals("orth")) {
+													example = exampleService.getExample(e4.text().substring(4));
+												}
+											}
 										}
 									}
+									Word word = wordService.getWord(wordName);
+									if (word != null && partOfSpeech != null && example != null && explain != null) {
+										relationship.setWordID(word.getId());
+										relationship.setPartOfSpeechID(partOfSpeech.getId());
+										relationship.setExampleID(example.getId());
+										relationship.setExplainID(explain.getId());
+										relationshipService.saveRelationship(relationship);
+									}
+								} catch (ConstraintViolationException e) {
+									e.printStackTrace();
 								}
 							}
-							relationship.setPartOfSpeechID(partOfSpeech.getId());
-							relationship.setExampleID(example.getId());
-							relationship.setExplainID(explain.getId());
-							relationshipService.saveRelationship(relationship);
 						}
+					} else if (e1.id() != null && e1.id().equals("translations_box")) {
+
 					}
-				} else if (e1.id() != null && e1.id().equals("translations_box")) {
-					
 				}
+				content = "success";
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
