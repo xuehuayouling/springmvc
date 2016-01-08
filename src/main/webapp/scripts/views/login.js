@@ -124,7 +124,9 @@ Ext.application({
 						success : function(form1, result1, data1) {
 							var dto = Ext.JSON.decode(data1);
 							if (dto.success == 1) {
-								window.location.href = '../access/test?token=' + dto.result
+								token = dto.result
+								alert(token);
+								window.location.href = '../access/asset_list_view?token=' + dto.result
 							} else {
 								Ext.Msg.alert('', dto.result);
 							}
