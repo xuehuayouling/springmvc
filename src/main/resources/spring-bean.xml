@@ -8,12 +8,4 @@
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
-	  
-	<bean id="userDAO" class="com.ysq.test.dao.UserDAO">
-		  <property name="sessionFactory" ref="sessionFactory"></property>
-	</bean>
-	<bean id="userService" class="com.ysq.test.service.UserService">
-		<property name="userDao" ref="userDAO"></property>
-	</bean>
-        
 </beans>
