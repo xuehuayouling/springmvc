@@ -30,6 +30,20 @@ public class AddWordController {
 	private WordSaverService wordSaverService;
 	private static final String BASE_URL = "http://www.collinsdictionary.com/dictionary/american-cobuild-learners/";
 
+	@RequestMapping(value = "/test")
+	public ModelAndView test() {
+		ModelAndView mv = new ModelAndView();
+		String content = "";
+		try {
+			wordSaverService.saveTest();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		mv.addObject("message", content);
+		mv.setViewName("hello");
+		return mv;
+	}
+	
 	@RequestMapping(value = "/addWord")
 	public ModelAndView count(@RequestParam(value = "name", required = true) String name) {
 		ModelAndView mv = new ModelAndView();

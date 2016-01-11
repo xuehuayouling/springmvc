@@ -4,13 +4,14 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.ysq.test.dao.ExampleDAO;
 import com.ysq.test.dao.ExplainDAO;
 import com.ysq.test.dao.PartOfSpeechDAO;
 import com.ysq.test.dao.RelationshipDAO;
 import com.ysq.test.dao.WordDAO;
-import com.ysq.test.dao.WordSaverDAO;
 import com.ysq.test.entity.Example;
 import com.ysq.test.entity.Explain;
 import com.ysq.test.entity.PartOfSpeech;
@@ -19,6 +20,7 @@ import com.ysq.test.entity.Word;
 import com.ysq.test.entity.WordWithAll;
 
 @Service
+@Transactional
 public class WordSaverService {
 	@Autowired
 	private WordDAO wordDAO;
@@ -92,25 +94,17 @@ public class WordSaverService {
 	public void saveWordWithAll(List<WordWithAll> wordWithAlls) {
 		try {
 			for (WordWithAll wordWithAll : wordWithAlls) {
-				Word word = wordDAO.addOrGetByName(wordWithAll.getWord().getName());
-				for (WordWithAll.Meaning meaning : wordWithAll.getMeanings()) {
-					PartOfSpeech partOfSpeech = partOfSpeechDAO.addOrGetByName(meaning.getPartOfSpeech().getName());
-					Explain explain = explainDAO.addOrGetByContent(meaning.getExplain().getContent());
-					for (Example example : meaning.getExamples()) {
-						example = exampleDAO.addOrGetByContent(example.getContent());
-						Relationship relationship = new Relationship();
-						relationship.setWordID(word.getId());
-						relationship.setPartOfSpeechID(partOfSpeech.getId());
-						relationship.setExampleID(explain.getId());
-						relationship.setExampleID(example.getId());
-						relationshipDAO.saveRelationship(relationship);
-					}
-				}
-//				return false;
+				saveWordWithAll(wordWithAll);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
+	public void saveTest() {
+		String[] names = { "something", null };
+		for (String name : names) {
+			Word word = wordDAO.addOrGetByName(name);
+		}
+	}
 }
