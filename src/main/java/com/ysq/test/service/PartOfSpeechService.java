@@ -19,8 +19,8 @@ public class PartOfSpeechService {
 		this.partOfSpeechDAO = partOfSpeechDAO;
 	}
 	
-	public PartOfSpeech getPartOfSpeech(String name) {
-		return partOfSpeechDAO.getOrAddByName(name);
+	public PartOfSpeech getPartOfSpeech(PartOfSpeech partOfSpeech) {
+		return partOfSpeechDAO.addOrGetByName(partOfSpeech.getName());
 	}
 
 }

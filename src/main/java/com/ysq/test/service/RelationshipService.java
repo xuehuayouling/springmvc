@@ -9,18 +9,21 @@ import com.ysq.test.entity.Relationship;
 @Service
 public class RelationshipService {
 	@Autowired
-	private RelationshipDAO explainDAO;
+	private RelationshipDAO relationshipDAO;
 
-	public RelationshipDAO getExplainDAO() {
-		return explainDAO;
-	}
-
-	public void setExplainDAO(RelationshipDAO explainDAO) {
-		this.explainDAO = explainDAO;
-	}
 	
+	public RelationshipDAO getRelationshipDAO() {
+		return relationshipDAO;
+	}
+
+
+	public void setRelationshipDAO(RelationshipDAO relationshipDAO) {
+		this.relationshipDAO = relationshipDAO;
+	}
+
+
 	public void saveRelationship(Relationship relationship) {
-		explainDAO.saveRelationship(relationship);
+		relationshipDAO.saveRelationship(relationship);
 	}
 	
 }

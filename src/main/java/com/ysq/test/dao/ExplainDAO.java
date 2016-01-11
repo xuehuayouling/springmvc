@@ -23,7 +23,7 @@ public class ExplainDAO {
 		return sessionFactory;
 	}
 
-	public Explain getOrAddByContent(String content) {
+	public Explain addOrGetByContent(String content) {
 		if (findExplain(content) == null) {
 			addExplain(content);
 		}

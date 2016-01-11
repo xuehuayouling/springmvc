@@ -23,7 +23,7 @@ public class WordDAO {
 		return sessionFactory;
 	}
 
-	public Word getOrAddByName(String name) {
+	public Word addOrGetByName(String name) {
 		if (findWord(name) == null) {
 			addWord(name);
 		}

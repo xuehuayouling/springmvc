@@ -15,12 +15,12 @@ public class WordService {
 		return wordDAO;
 	}
 
-	public void setWordDAO(WordDAO WordDAO) {
-		this.wordDAO = WordDAO;
+	public void setWordDAO(WordDAO wordDAO) {
+		this.wordDAO = wordDAO;
 	}
-	
-	public Word getWord(String name) {
-		return wordDAO.getOrAddByName(name);
+
+	public Word getWord(Word word) {
+		return wordDAO.addOrGetByName(word.getName());
 	}
 
 }

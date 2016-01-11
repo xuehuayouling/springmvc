@@ -19,8 +19,8 @@ public class ExampleService {
 		this.exampleDAO = exampleDAO;
 	}
 	
-	public Example getExample(String content) {
-		return exampleDAO.getOrAddByContent(content);
+	public Example getExample(Example example) {
+		return exampleDAO.addOrGetByContent(example.getContent());
 	}
 
 }

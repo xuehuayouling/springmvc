@@ -23,7 +23,7 @@ public class ExampleDAO {
 		return sessionFactory;
 	}
 
-	public Example getOrAddByContent(String content) {
+	public Example addOrGetByContent(String content) {
 		if (findExample(content) == null) {
 			addExample(content);
 		}

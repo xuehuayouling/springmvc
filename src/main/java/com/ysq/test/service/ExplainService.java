@@ -19,8 +19,8 @@ public class ExplainService {
 		this.explainDAO = explainDAO;
 	}
 	
-	public Explain getExplain(String content) {
-		return explainDAO.getOrAddByContent(content);
+	public Explain getExplain(Explain explain) {
+		return explainDAO.addOrGetByContent(explain.getContent());
 	}
 
 }

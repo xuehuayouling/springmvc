@@ -23,7 +23,7 @@ public class PartOfSpeechDAO {
 		return sessionFactory;
 	}
 
-	public PartOfSpeech getOrAddByName(String name) {
+	public PartOfSpeech addOrGetByName(String name) {
 		if (findPartOfSpeech(name) == null) {
 			addPartOfSpeech(name);
 		}
