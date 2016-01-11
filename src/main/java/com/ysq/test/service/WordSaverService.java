@@ -78,13 +78,21 @@ public class WordSaverService {
 		for (WordWithAll.Meaning meaning : wordWithAll.getMeanings()) {
 			PartOfSpeech partOfSpeech = partOfSpeechDAO.addOrGetByName(meaning.getPartOfSpeech().getName());
 			Explain explain = explainDAO.addOrGetByContent(meaning.getExplain().getContent());
-			for (Example example : meaning.getExamples()) {
-				example = exampleDAO.addOrGetByContent(example.getContent());
+			if (meaning.getExamples().size() > 0) {
+				for (Example example : meaning.getExamples()) {
+					example = exampleDAO.addOrGetByContent(example.getContent());
+					Relationship relationship = new Relationship();
+					relationship.setWordID(word.getId());
+					relationship.setPartOfSpeechID(partOfSpeech.getId());
+					relationship.setExplainID(explain.getId());
+					relationship.setExampleID(example.getId());
+					relationshipDAO.saveRelationship(relationship);
+				}
+			} else {
 				Relationship relationship = new Relationship();
 				relationship.setWordID(word.getId());
 				relationship.setPartOfSpeechID(partOfSpeech.getId());
-				relationship.setExampleID(explain.getId());
-				relationship.setExampleID(example.getId());
+				relationship.setExplainID(explain.getId());
 				relationshipDAO.saveRelationship(relationship);
 			}
 		}
@@ -92,19 +100,11 @@ public class WordSaverService {
 	}
 
 	public void saveWordWithAll(List<WordWithAll> wordWithAlls) {
-		try {
-			for (WordWithAll wordWithAll : wordWithAlls) {
-				saveWordWithAll(wordWithAll);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		for (WordWithAll wordWithAll : wordWithAlls) {
+			saveWordWithAll(wordWithAll);
 		}
 	}
 
 	public void saveTest() {
-		String[] names = { "something", null };
-		for (String name : names) {
-			Word word = wordDAO.addOrGetByName(name);
-		}
 	}
 }

@@ -22,6 +22,7 @@ import com.ysq.test.entity.WordWithAll;
 import com.ysq.test.service.WordSaverService;
 import com.ysq.test.util.HttpUtil;
 import com.ysq.test.util.JsonUtil;
+import com.ysq.test.util.TextUtil;
 
 @Controller
 @RequestMapping("/addWord")
@@ -52,8 +53,13 @@ public class AddWordController {
 		if (wordWithAlls == null) {
 			content = "analysis failure";
 		} else {
-				wordSaverService.saveWordWithAll(wordWithAlls);
-				content = JsonUtil.getJsonFromObject(wordWithAlls);
+				try {
+					wordSaverService.saveWordWithAll(wordWithAlls);
+					content = JsonUtil.getJsonFromObject(wordWithAlls);
+				} catch (Exception e) {
+					e.printStackTrace();
+					content = "Save failure";
+				}
 		}
 		mv.addObject("message", content);
 		mv.setViewName("hello");
@@ -108,14 +114,18 @@ public class AddWordController {
 										}
 									}
 								}
-								meaning.setPartOfSpeech(partOfSpeech);
-								meaning.setExamples(examples);
-								meaning.setExplain(explain);
-								meanings.add(meaning);
+								if (!TextUtil.isEmpty(partOfSpeech.getName()) && !TextUtil.isEmpty(explain.getContent())) {
+									meaning.setPartOfSpeech(partOfSpeech);
+									meaning.setExamples(examples);
+									meaning.setExplain(explain);
+									meanings.add(meaning);
+								}
 							}
 						}
-						wordWithAll.setMeanings(meanings);
-						wordWithAlls.add(wordWithAll);
+						if (meanings.size() > 0) {
+							wordWithAll.setMeanings(meanings);
+							wordWithAlls.add(wordWithAll);
+						}
 					} else if (e1.id() != null && e1.id().equals("translations_box")) {
 
 					}
