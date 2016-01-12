@@ -9,11 +9,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "t_part_of_speech")
-public class PartOfSpeech {
+@Table(name = "t_word_pronunciation")
+public class WordPronunciation {
 
 	private long id;
-	private String name;
+	private long wordID;
+	private long pronunciationID;
 
 	@Id
 	@Basic(optional = false)
@@ -27,12 +28,21 @@ public class PartOfSpeech {
 		this.id = id;
 	}
 
-	@Column(name = "name")
-	public String getName() {
-		return name;
+	@Column(name = "word_id", nullable = false)
+	public long getWordID() {
+		return wordID;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setWordID(long wordID) {
+		this.wordID = wordID;
 	}
+	@Column(name = "pronunciation_id", nullable = false)
+	public long getPronunciationID() {
+		return pronunciationID;
+	}
+
+	public void setPronunciationID(long pronunciationID) {
+		this.pronunciationID = pronunciationID;
+	}
+
 }

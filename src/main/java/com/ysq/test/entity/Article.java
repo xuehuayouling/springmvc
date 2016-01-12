@@ -9,11 +9,11 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "t_part_of_speech")
-public class PartOfSpeech {
+@Table(name = "t_article")
+public class Article {
 
 	private long id;
-	private String name;
+	private String content;
 
 	@Id
 	@Basic(optional = false)
@@ -27,12 +27,12 @@ public class PartOfSpeech {
 		this.id = id;
 	}
 
-	@Column(name = "name")
-	public String getName() {
-		return name;
+	@Column(name = "content", nullable = false)
+	public String getContent() {
+		return content;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setContent(String content) {
+		this.content = content;
 	}
 }

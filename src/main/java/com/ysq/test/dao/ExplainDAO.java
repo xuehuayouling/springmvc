@@ -7,11 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.ysq.test.entity.Explain;
-import com.ysq.test.util.TextUtil;
 
 @Repository
 public class ExplainDAO {
 
+	private static final String BASE_QUERY_SQL_BY_CONTENT = "from Explain as t_explain where t_explain.content=:content";
+	private static final String BASE_QUERY_SQL_BY_ID = "from Explain as t_explain where t_explain.id=:id";
 	@Autowired
 	private SessionFactory sessionFactory;
 
@@ -23,36 +24,33 @@ public class ExplainDAO {
 		return sessionFactory;
 	}
 
-	public Explain addOrGetByContent(String content) {
-		if (findExplain(content) == null) {
-			addExplain(content);
+	public long getIdByContent(String content) {
+		Explain explain = queryByContent(content);
+		if (explain != null) {
+			return explain.getId();
+		} else {
+			return addByContent(content);
 		}
-		return findExplain(content);
 	}
-	
-	public void addExplain(String content) {
+
+	private long addByContent(String content) {
 		Session session = sessionFactory.getCurrentSession();
 		Explain explain = new Explain();
 		explain.setContent(content);
-		session.save(explain);
+		return (long) session.save(explain);
 	}
-	public Explain findExplain(String content) {
-		if (TextUtil.isEmpty(content)) {
-			return null;
-		}
-		content = content.replaceAll("'", "''");
-		String sql = "from t_explain where content='%s'";
-		sql = String.format(sql, content);
-		return queryExplainBySql(sql);
+
+	private Explain queryByContent(String content) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery(BASE_QUERY_SQL_BY_CONTENT);
+		Explain explain = (Explain) query.setString("content", content).uniqueResult();
+		return explain;
 	}
 	
-	private Explain queryExplainBySql(String sql) {
+	public Explain queryByID(long id) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery(sql);
-		if (query.list().size() > 0) {
-			Explain explain = (Explain) query.list().get(0);
-			return explain;
-		}
-		return null;
+		Query query = session.createQuery(BASE_QUERY_SQL_BY_ID);
+		Explain explain = (Explain) query.setLong("id", id).uniqueResult();
+		return explain;
 	}
 }

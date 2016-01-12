@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.ysq.test.entity.Example;
 import com.ysq.test.entity.Explain;
 import com.ysq.test.entity.PartOfSpeech;
-import com.ysq.test.entity.Relationship;
+import com.ysq.test.entity.WordPosExplain;
 import com.ysq.test.entity.Word;
 import com.ysq.test.entity.WordWithAll;
 

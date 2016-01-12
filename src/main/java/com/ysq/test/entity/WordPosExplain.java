@@ -6,14 +6,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
-@Entity(name = "t_relationship")
-public class Relationship {
+@Entity
+@Table(name = "t_word_pos_explain")
+public class WordPosExplain {
 
 	private long id;
 	private long explainID;
 	private long wordID;
-	private long exampleID;
 	private long partOfSpeechID;
 
 	@Id
@@ -35,15 +36,6 @@ public class Relationship {
 
 	public void setWordID(long wordID) {
 		this.wordID = wordID;
-	}
-
-	@Column(name = "example_id", nullable = false)
-	public long getExampleID() {
-		return exampleID;
-	}
-
-	public void setExampleID(long exampleID) {
-		this.exampleID = exampleID;
 	}
 
 	@Column(name = "part_of_speech_id", nullable = false)

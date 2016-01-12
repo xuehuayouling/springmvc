@@ -7,11 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.ysq.test.entity.PartOfSpeech;
-import com.ysq.test.util.TextUtil;
 
 @Repository
 public class PartOfSpeechDAO {
 
+	private static final String BASE_QUERY_SQL_BY_NAME = "from PartOfSpeech as t_part_of_speech where t_part_of_speech.name=:name";
+	private static final String BASE_QUERY_SQL_BY_ID = "from PartOfSpeech as t_part_of_speech where t_part_of_speech.id=:id";
 	@Autowired
 	private SessionFactory sessionFactory;
 
@@ -23,37 +24,33 @@ public class PartOfSpeechDAO {
 		return sessionFactory;
 	}
 
-	public PartOfSpeech addOrGetByName(String name) {
-		if (findPartOfSpeech(name) == null) {
-			addPartOfSpeech(name);
+	public long getIdByName(String name) {
+		PartOfSpeech partOfSpeech = queryByName(name);
+		if (partOfSpeech != null) {
+			return partOfSpeech.getId();
+		} else {
+			return addByName(name);
 		}
-		return findPartOfSpeech(name);
 	}
 
-	public void addPartOfSpeech(String name) {
+	private long addByName(String name) {
 		Session session = sessionFactory.getCurrentSession();
-		PartOfSpeech PartOfSpeech = new PartOfSpeech();
-		PartOfSpeech.setName(name);
-		session.save(PartOfSpeech);
+		PartOfSpeech partOfSpeech = new PartOfSpeech();
+		partOfSpeech.setName(name);
+		return (long) session.save(partOfSpeech);
 	}
 
-	public PartOfSpeech findPartOfSpeech(String name) {
-		if (TextUtil.isEmpty(name)) {
-			return null;
-		}
-		name = name.replaceAll("'", "''");
-		String sql = "from t_part_of_speech where name='%s'";
-		sql = String.format(sql, name);
-		return queryPartOfSpeechBySql(sql);
-	}
-
-	private PartOfSpeech queryPartOfSpeechBySql(String sql) {
+	private PartOfSpeech queryByName(String name) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery(sql);
-		if (query.list().size() > 0) {
-			PartOfSpeech partOfSpeech = (PartOfSpeech) query.list().get(0);
-			return partOfSpeech;
-		}
-		return null;
+		Query query = session.createQuery(BASE_QUERY_SQL_BY_NAME);
+		PartOfSpeech partOfSpeech = (PartOfSpeech) query.setString("name", name).uniqueResult();
+		return partOfSpeech;
+	}
+
+	public PartOfSpeech queryByID(long id) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery(BASE_QUERY_SQL_BY_ID);
+		PartOfSpeech partOfSpeech = (PartOfSpeech) query.setLong("id", id).uniqueResult();
+		return partOfSpeech;
 	}
 }

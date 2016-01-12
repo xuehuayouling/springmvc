@@ -7,11 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.ysq.test.entity.Example;
-import com.ysq.test.util.TextUtil;
 
 @Repository
 public class ExampleDAO {
 
+	private static final String BASE_QUERY_SQL_BY_CONTENT = "from Example as t_example where t_example.content=:content";
+	private static final String BASE_QUERY_SQL_BY_ID = "from Example as t_example where t_example.id=:id";
 	@Autowired
 	private SessionFactory sessionFactory;
 
@@ -23,36 +24,33 @@ public class ExampleDAO {
 		return sessionFactory;
 	}
 
-	public Example addOrGetByContent(String content) {
-		if (findExample(content) == null) {
-			addExample(content);
+	public long getIdByContent(String content) {
+		Example example = queryByContent(content);
+		if (example != null) {
+			return example.getId();
+		} else {
+			return addByContent(content);
 		}
-		return findExample(content);
 	}
-	
-	public void addExample(String content) {
+
+	private long addByContent(String content) {
 		Session session = sessionFactory.getCurrentSession();
 		Example example = new Example();
 		example.setContent(content);
-		session.save(example);
+		return (long) session.save(example);
 	}
-	public Example findExample(String content) {
-		if (TextUtil.isEmpty(content)) {
-			return null;
-		}
-		content = content.replaceAll("'", "''");
-		String sql = "from t_example where content='%s'";
-		sql = String.format(sql, content);
-		return queryExampleBySql(sql);
-	}
-	
-	private Example queryExampleBySql(String sql) {
+
+	private Example queryByContent(String content) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery(sql);
-		if (query.list().size() > 0) {
-			Example example = (Example) query.list().get(0);
-			return example;
-		}
-		return null;
+		Query query = session.createQuery(BASE_QUERY_SQL_BY_CONTENT);
+		Example example = (Example) query.setString("content", content).uniqueResult();
+		return example;
+	}
+
+	public Example queryByID(long exampleID) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery(BASE_QUERY_SQL_BY_ID);
+		Example example = (Example) query.setLong("id", exampleID).uniqueResult();
+		return example;
 	}
 }

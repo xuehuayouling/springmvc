@@ -47,6 +47,8 @@
       <property name="url" value="${jdbc.url}" />
       <property name="username" value="${jdbc.user}" />
       <property name="password" value="${jdbc.pass}" />
+      <property name="connection.useUnicode" value="true" />
+	  <property name="connection.characterEncoding" value="UTF-8" />
    </bean>
    
 	<!-- 配置Hibernate事务管理器 -->

@@ -5,10 +5,10 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.ysq.test.entity.Relationship;
+import com.ysq.test.entity.WordPronunciation;
 
 @Repository
-public class RelationshipDAO {
+public class WordPronunciationDAO {
 
 	@Autowired
 	private SessionFactory sessionFactory;
@@ -21,8 +21,9 @@ public class RelationshipDAO {
 		return sessionFactory;
 	}
 	
-	public void saveRelationship(Relationship relationship) {
+	public long save(WordPronunciation wordPronunciation) {
 		Session session = sessionFactory.getCurrentSession();
-		session.save(relationship);
+		return (long) session.save(wordPronunciation);
 	}
+
 }

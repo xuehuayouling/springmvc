@@ -7,11 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.ysq.test.entity.Word;
-import com.ysq.test.util.TextUtil;
 
 @Repository
 public class WordDAO {
 
+	private static final String BASE_QUERY_SQL = "from Word as t_word where t_word.name=:name";
 	@Autowired
 	private SessionFactory sessionFactory;
 
@@ -23,36 +23,36 @@ public class WordDAO {
 		return sessionFactory;
 	}
 
-	public Word addOrGetByName(String name) {
-		if (findWord(name) == null) {
-			addWord(name);
-		}
-		return findWord(name);
+	/**
+	 * 通过名字获取实例，如果没有则返回null
+	 * @param name
+	 * @return
+	 */
+	public Word queryByName(String name) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery(BASE_QUERY_SQL);
+		Word word = (Word) query.setString("name", name).uniqueResult();
+		return word;
 	}
-	
-	public void addWord(String name) {
+
+	/**
+	 * 通过名字获取id，如果数据库中没有，则添加新的并返回id。
+	 * @param name
+	 * @return id
+	 */
+	public long getIdByName(String name) {
+		Word word = queryByName(name);
+		if (word != null) {
+			return word.getId();
+		} else {
+			return addByName(name);
+		}
+	}
+
+	private long addByName(String name) {
 		Session session = sessionFactory.getCurrentSession();
 		Word word = new Word();
 		word.setName(name);
-		session.save(word);
-	}
-	public Word findWord(String name) {
-		if (TextUtil.isEmpty(name)) {
-			return null;
-		}
-		name = name.replaceAll("'", "''");
-		String sql = "from t_word where name='%s'";
-		sql = String.format(sql, name);
-		return queryWordBySql(sql);
-	}
-	
-	private Word queryWordBySql(String sql) {
-		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery(sql);
-		if (query.list().size() > 0) {
-			Word word = (Word) query.list().get(0);
-			return word;
-		}
-		return null;
+		return (long) session.save(word);
 	}
 }

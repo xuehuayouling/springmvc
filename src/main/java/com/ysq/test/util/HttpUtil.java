@@ -11,7 +11,7 @@ import java.net.URL;
 public class HttpUtil {
 
 	private static final int BUFFER_SIZE = 102400;
-
+	public static final String BASE_VOICE_FILE_PATH = "/Users/ysq/Music/dictionaryvoices/";
 	public static InputStream getInputStream(String urlPath) {
 		InputStream inputStream = null;
 		HttpURLConnection httpURLConnection = null;
@@ -53,9 +53,42 @@ public class HttpUtil {
 	public static String getURLContent(String urlPath) throws Exception {
 		return inputStreamTOString(getInputStream(urlPath));
 	}
+	
+	public static boolean saveMp3ToDisk(String urlPath, String name) {
+		InputStream inputStream = getInputStream(urlPath + name);
+		byte[] data = new byte[BUFFER_SIZE];
+		int len = 0;
+		FileOutputStream fileOutputStream = null;
+		try {
+			fileOutputStream = new FileOutputStream(BASE_VOICE_FILE_PATH + name + ".mp3");
+			while ((len = inputStream.read(data)) != -1) {
+				fileOutputStream.write(data, 0, len);
+			}
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (fileOutputStream != null) {
+				try {
+					fileOutputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return false;
+	}
+	
 	public static void saveImageToDisk(String urlPath) {
 		InputStream inputStream = getInputStream(urlPath);
-		byte[] data = new byte[1024];
+		byte[] data = new byte[BUFFER_SIZE];
 		int len = 0;
 		FileOutputStream fileOutputStream = null;
 		try {

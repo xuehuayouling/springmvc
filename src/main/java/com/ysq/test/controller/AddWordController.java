@@ -17,8 +17,10 @@ import org.springframework.web.servlet.ModelAndView;
 import com.ysq.test.entity.Example;
 import com.ysq.test.entity.Explain;
 import com.ysq.test.entity.PartOfSpeech;
+import com.ysq.test.entity.Pronunciation;
 import com.ysq.test.entity.Word;
 import com.ysq.test.entity.WordWithAll;
+import com.ysq.test.service.PronunciationService;
 import com.ysq.test.service.WordSaverService;
 import com.ysq.test.util.HttpUtil;
 import com.ysq.test.util.JsonUtil;
@@ -27,16 +29,20 @@ import com.ysq.test.util.TextUtil;
 @Controller
 @RequestMapping("/addWord")
 public class AddWordController {
+	private static final String BASE_URL = "http://www.collinsdictionary.com/dictionary/american-cobuild-learners/";
+	private static final String URL_FOR_PHONETIC = "http://www.collinsdictionary.com/dictionary/american/";
+	private static final String BASE_URL_FOR_VOICE = "http://dict.youdao.com/dictvoice?type=2&audio=";
+	
 	@Resource(name = "wordSaverService")
 	private WordSaverService wordSaverService;
-	private static final String BASE_URL = "http://www.collinsdictionary.com/dictionary/american-cobuild-learners/";
-
+	@Resource(name = "pronunciationService")
+	private PronunciationService pronunciationService;
 	@RequestMapping(value = "/test")
 	public ModelAndView test() {
 		ModelAndView mv = new ModelAndView();
 		String content = "";
 		try {
-			wordSaverService.saveTest();
+//			HttpUtil.saveMp3ToDisk(BASE_URL_FOR_VOICE);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -49,10 +55,12 @@ public class AddWordController {
 	public ModelAndView count(@RequestParam(value = "name", required = true) String name) {
 		ModelAndView mv = new ModelAndView();
 		String content = "failure";
-		List<WordWithAll> wordWithAlls = getWordWithAllsFormCollins(name);
+		List<WordWithAll> wordWithAlls = wordSaverService.getWordWithAllsByWordName(name);
 		if (wordWithAlls == null) {
-			content = "analysis failure";
-		} else {
+			wordWithAlls = getWordWithAllsFormCollins(name);
+			if (wordWithAlls == null) {
+				content = "analysis failure";
+			} else {
 				try {
 					wordSaverService.saveWordWithAll(wordWithAlls);
 					content = JsonUtil.getJsonFromObject(wordWithAlls);
@@ -60,7 +68,11 @@ public class AddWordController {
 					e.printStackTrace();
 					content = "Save failure";
 				}
+			}
+		} else {
+			content = JsonUtil.getJsonFromObject(wordWithAlls);
 		}
+		
 		mv.addObject("message", content);
 		mv.setViewName("hello");
 		return mv;
@@ -87,6 +99,18 @@ public class AddWordController {
 						Word word = new Word();
 						word.setName(wordName);
 						wordWithAll.setWord(word);
+						String phonetic = getPhoneticByName(wordName, name);
+						Pronunciation pronunciation = pronunciationService.queryBySpell(phonetic);
+						if (pronunciation != null) {
+							wordWithAll.setPronunciation(pronunciation);
+						} else {
+							if (HttpUtil.saveMp3ToDisk(BASE_URL_FOR_VOICE, wordName)) {
+								pronunciation = new Pronunciation();
+								pronunciation.setVoicePath(HttpUtil.BASE_VOICE_FILE_PATH + wordName + ".mp3");
+								pronunciation.setSpell(phonetic);
+								wordWithAll.setPronunciation(pronunciation);
+							}
+						}
 						List<WordWithAll.Meaning> meanings = new ArrayList<>();
 						for (Element e2 : definitions_hom_subsec.children()) {
 							if (e2.id() != null && e2.id().startsWith(name)) {
@@ -132,6 +156,35 @@ public class AddWordController {
 				}
 			}
 			return wordWithAlls;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private String getPhoneticByName(String name, String originName) {
+		try {
+			Document document = Jsoup.parse(HttpUtil.getURLContent(URL_FOR_PHONETIC + originName));
+			Elements elements = document.getElementsByTag("body");
+			Elements definition_main = elements.get(0).getElementsByClass("definition_main");
+			if (!definition_main.isEmpty()) {
+				Element definition_content = definition_main.first()
+						.getElementsByAttributeValueContaining("class", "definition_content").first();
+				for (Element e1 : definition_content.children()) {
+					if (e1.id() != null && e1.id().startsWith(originName)) {
+						Element definitions_hom_subsec_for_name = e1
+								.getElementsByAttributeValueEnding("class", "orth h1_entry").first();
+						String wordName = definitions_hom_subsec_for_name.html();
+						wordName = wordName.substring(0, wordName.indexOf("<span"));
+						if (name.equals(wordName)) {
+							Element pron = definitions_hom_subsec_for_name
+									.getElementsByAttributeValueContaining("class", "pron").first();
+							String phonetic = pron.text();
+							return phonetic.substring(1, phonetic.length() -2);
+						}
+					}
+				}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
