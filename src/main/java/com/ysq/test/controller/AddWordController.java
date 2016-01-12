@@ -21,7 +21,7 @@ import com.ysq.test.entity.Pronunciation;
 import com.ysq.test.entity.Word;
 import com.ysq.test.entity.WordWithAll;
 import com.ysq.test.service.PronunciationService;
-import com.ysq.test.service.WordSaverService;
+import com.ysq.test.service.WordWithAllService;
 import com.ysq.test.util.HttpUtil;
 import com.ysq.test.util.JsonUtil;
 import com.ysq.test.util.TextUtil;
@@ -34,7 +34,7 @@ public class AddWordController {
 	private static final String BASE_URL_FOR_VOICE = "http://dict.youdao.com/dictvoice?type=2&audio=";
 	
 	@Resource(name = "wordSaverService")
-	private WordSaverService wordSaverService;
+	private WordWithAllService wordSaverService;
 	@Resource(name = "pronunciationService")
 	private PronunciationService pronunciationService;
 	@RequestMapping(value = "/test")

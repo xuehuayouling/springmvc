@@ -12,12 +12,14 @@ import com.ysq.test.dao.ExplainDAO;
 import com.ysq.test.dao.PartOfSpeechDAO;
 import com.ysq.test.dao.PronunciationDAO;
 import com.ysq.test.dao.WordDAO;
+import com.ysq.test.dao.WordExamDAO;
 import com.ysq.test.dao.WordPosExplainDAO;
 import com.ysq.test.dao.WordPronunciationDAO;
 import com.ysq.test.dao.WpeExampleDAO;
 import com.ysq.test.entity.Example;
 import com.ysq.test.entity.Pronunciation;
 import com.ysq.test.entity.Word;
+import com.ysq.test.entity.WordExam;
 import com.ysq.test.entity.WordPosExplain;
 import com.ysq.test.entity.WordPronunciation;
 import com.ysq.test.entity.WordWithAll;
@@ -26,7 +28,7 @@ import com.ysq.test.entity.WpeExample;
 
 @Service
 @Transactional
-public class WordSaverService {
+public class WordWithAllService {
 	@Autowired
 	private WordDAO wordDAO;
 	@Autowired
@@ -43,49 +45,19 @@ public class WordSaverService {
 	private WordPronunciationDAO wordPronunciationDAO;
 	@Autowired
 	private PronunciationDAO pronunciationDAO;
+	@Autowired
+	private WordExamDAO wordExamDAO;
 	
-	public WordDAO getWordDAO() {
-		return wordDAO;
-	}
-
-	public void setWordDAO(WordDAO wordDAO) {
-		this.wordDAO = wordDAO;
-	}
-
-	public PartOfSpeechDAO getPartOfSpeechDAO() {
-		return partOfSpeechDAO;
-	}
-
-	public void setPartOfSpeechDAO(PartOfSpeechDAO partOfSpeechDAO) {
-		this.partOfSpeechDAO = partOfSpeechDAO;
-	}
-
-	public ExampleDAO getExampleDAO() {
-		return exampleDAO;
-	}
-
-	public void setExampleDAO(ExampleDAO exampleDAO) {
-		this.exampleDAO = exampleDAO;
-	}
-
-	public ExplainDAO getExplainDAO() {
-		return explainDAO;
-	}
-
-	public void setExplainDAO(ExplainDAO explainDAO) {
-		this.explainDAO = explainDAO;
-	}
-
-	public WordPosExplainDAO getRelationshipDAO() {
-		return wordPosExplainDAO;
-	}
-
-	public void setRelationshipDAO(WordPosExplainDAO relationshipDAO) {
-		this.wordPosExplainDAO = relationshipDAO;
-	}
-
 	private void saveWordWithAll(WordWithAll wordWithAll) {
 		long wordID = wordDAO.getIdByName(wordWithAll.getWord().getName());
+		try {
+			WordExam wordExam = new WordExam();
+			wordExam.setExamID(1);
+			wordExam.setWordID(wordID);
+			wordExamDAO.save(wordExam);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		if (wordWithAll.getPronunciation() != null) {
 			Pronunciation pronunciation = pronunciationDAO.queryBySpell(wordWithAll.getPronunciation().getSpell());
 			long pronunciationID;
