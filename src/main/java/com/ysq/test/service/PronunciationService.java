@@ -24,4 +24,8 @@ public class PronunciationService {
 	public Pronunciation queryBySpell(String spell) {
 		return pronunciationDAO.queryBySpell(spell);
 	}
+	
+	public long save(Pronunciation pronunciation) {
+		return pronunciationDAO.save(pronunciation);
+	}
 }

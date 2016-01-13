@@ -7,6 +7,7 @@
     <title>Title</title>
 </head>
 <body>
-	测试结果：${message}
+	测试结果：${result}
+	<br/>${message}
 </body>
 </html>

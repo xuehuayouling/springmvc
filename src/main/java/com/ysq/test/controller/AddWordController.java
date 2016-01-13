@@ -27,16 +27,18 @@ import com.ysq.test.util.JsonUtil;
 import com.ysq.test.util.TextUtil;
 
 @Controller
-@RequestMapping("/addWord")
+@RequestMapping("/word")
 public class AddWordController {
 	private static final String BASE_URL = "http://www.collinsdictionary.com/dictionary/american-cobuild-learners/";
 	private static final String URL_FOR_PHONETIC = "http://www.collinsdictionary.com/dictionary/american/";
 	private static final String BASE_URL_FOR_VOICE = "http://dict.youdao.com/dictvoice?type=2&audio=";
 	
-	@Resource(name = "wordSaverService")
-	private WordWithAllService wordSaverService;
+	@Resource(name = "wordWithAllService")
+	private WordWithAllService wordWithAllService;
 	@Resource(name = "pronunciationService")
 	private PronunciationService pronunciationService;
+	
+	
 	@RequestMapping(value = "/test")
 	public ModelAndView test() {
 		ModelAndView mv = new ModelAndView();
@@ -51,18 +53,43 @@ public class AddWordController {
 		return mv;
 	}
 	
-	@RequestMapping(value = "/addWord")
-	public ModelAndView count(@RequestParam(value = "name", required = true) String name) {
+	@RequestMapping(value = "/query")
+	public ModelAndView query(@RequestParam(value = "name", required = true) String name) {
 		ModelAndView mv = new ModelAndView();
-		String content = "failure";
-		List<WordWithAll> wordWithAlls = wordSaverService.getWordWithAllsByWordName(name);
+		List<WordWithAll> wordWithAlls = wordWithAllService.getWordWithAllsByWordName(name);
+		String content = "success";
 		if (wordWithAlls == null) {
 			wordWithAlls = getWordWithAllsFormCollins(name);
 			if (wordWithAlls == null) {
 				content = "analysis failure";
 			} else {
 				try {
-					wordSaverService.saveWordWithAll(wordWithAlls);
+					wordWithAllService.saveWordWithAll(wordWithAlls);
+					wordWithAlls = wordWithAllService.getWordWithAllsByWordName(name);
+				} catch (Exception e) {
+					e.printStackTrace();
+					content = "Save failure";
+				}
+			}
+		}
+		mv.addObject("result", content);
+		mv.addObject("message", wordWithAlls);
+		mv.setViewName("hello");
+		return mv;
+	}
+	
+	@RequestMapping(value = "/addWord")
+	public ModelAndView count(@RequestParam(value = "name", required = true) String name) {
+		ModelAndView mv = new ModelAndView();
+		String content = "failure";
+		List<WordWithAll> wordWithAlls = wordWithAllService.getWordWithAllsByWordName(name);
+		if (wordWithAlls == null) {
+			wordWithAlls = getWordWithAllsFormCollins(name);
+			if (wordWithAlls == null) {
+				content = "analysis failure";
+			} else {
+				try {
+					wordWithAllService.saveWordWithAll(wordWithAlls);
 					content = JsonUtil.getJsonFromObject(wordWithAlls);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -106,8 +133,9 @@ public class AddWordController {
 						} else {
 							if (HttpUtil.saveMp3ToDisk(BASE_URL_FOR_VOICE, wordName)) {
 								pronunciation = new Pronunciation();
-								pronunciation.setVoicePath(HttpUtil.BASE_VOICE_FILE_PATH + wordName + ".mp3");
+								pronunciation.setVoicePath(wordName + ".mp3");
 								pronunciation.setSpell(phonetic);
+								pronunciationService.save(pronunciation);
 								wordWithAll.setPronunciation(pronunciation);
 							}
 						}
