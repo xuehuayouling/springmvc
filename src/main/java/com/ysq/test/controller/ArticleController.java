@@ -25,7 +25,14 @@ public class ArticleController {
 			{" Ross:", "\nRoss:"},
 			{" Rachel:", "\nRachel:"},
 			{" \\[Scene:", "\n\\[Scene:"}
-			
+			};
+	public static final String[][] FRIENDS_NAMES_VIEW = {
+			{"\nJoey:", "<br><span style=\"color:red;\">Joey:</span>"},
+			{"\nMonica:", "<br><span style=\"color:red;\">Monica:</span>"},
+			{"\nPhoebe:", "<br><span style=\"color:red;\">Phoebe:</span>"},
+			{"\nChandler:", "<br><span style=\"color:red;\">Chandler:</span>"},
+			{"\nRoss:", "<br><span style=\"color:red;\">Ross:</span>"},
+			{"\nRachel:", "<br><span style=\"color:red;\">Rachel:</span>"}
 			};
 	@RequestMapping(value = "/addArticle", method=RequestMethod.GET)
 	public ModelAndView view() {
@@ -47,8 +54,13 @@ public class ArticleController {
 		}
 		article.setContent(content);
 		articleService.save(article);
+		if (friends) {
+			for (String[] names : FRIENDS_NAMES_VIEW) {
+				article.setContent(article.getContent().replaceAll(names[0], names[1]));
+			}
+		}
 		mv.addObject("article", article);
-		mv.setViewName("articleInput");
+		mv.setViewName("articleView");
 		return mv;
 	}
 }
