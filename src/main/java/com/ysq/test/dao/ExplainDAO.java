@@ -24,23 +24,7 @@ public class ExplainDAO {
 		return sessionFactory;
 	}
 
-	public long getIdByContent(String content) {
-		Explain explain = queryByContent(content);
-		if (explain != null) {
-			return explain.getId();
-		} else {
-			return addByContent(content);
-		}
-	}
-
-	private long addByContent(String content) {
-		Session session = sessionFactory.getCurrentSession();
-		Explain explain = new Explain();
-		explain.setContent(content);
-		return (long) session.save(explain);
-	}
-
-	private Explain queryByContent(String content) {
+	public Explain queryByContent(String content) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.createQuery(BASE_QUERY_SQL_BY_CONTENT);
 		Explain explain = (Explain) query.setString("content", content).uniqueResult();
@@ -52,5 +36,10 @@ public class ExplainDAO {
 		Query query = session.createQuery(BASE_QUERY_SQL_BY_ID);
 		Explain explain = (Explain) query.setLong("id", id).uniqueResult();
 		return explain;
+	}
+	
+	public long save(Explain explain) {
+		Session session = sessionFactory.getCurrentSession();
+		return (long) session.save(explain);
 	}
 }

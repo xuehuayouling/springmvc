@@ -15,6 +15,7 @@ import com.ysq.test.dao.WordExamDAO;
 import com.ysq.test.dao.WordPosExplainDAO;
 import com.ysq.test.dao.WpeExampleDAO;
 import com.ysq.test.entity.Example;
+import com.ysq.test.entity.Explain;
 import com.ysq.test.entity.Word;
 import com.ysq.test.entity.WordExam;
 import com.ysq.test.entity.WordPosExplain;
@@ -75,7 +76,13 @@ public class WordWithAllService {
 		}
 		for (WordWithAll.Meaning meaning : wordWithAll.getMeanings()) {
 			long partOfSpeechId = partOfSpeechDAO.getIdByName(meaning.getPartOfSpeech().getName());
-			long explainId = explainDAO.getIdByContent(meaning.getExplain().getContent());
+			long explainId = -1;
+			Explain explain = explainDAO.queryByContent(meaning.getExplain().getContent());
+			if (explain != null) {
+				explainId = explain.getId();
+			} else {
+				explainId = explainDAO.save(meaning.getExplain());
+			}
 			WordPosExplain wordPosExplain = new WordPosExplain();
 			wordPosExplain.setWordID(wordID);
 			wordPosExplain.setPartOfSpeechID(partOfSpeechId);

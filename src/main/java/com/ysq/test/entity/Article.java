@@ -13,6 +13,7 @@ import javax.persistence.Table;
 public class Article {
 
 	private long id;
+	private String title;
 	private String content;
 
 	@Id
@@ -25,6 +26,15 @@ public class Article {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	@Column(name = "title", nullable = false)
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	@Column(name = "content", nullable = false)

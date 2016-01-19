@@ -241,8 +241,12 @@ public class AddWordController {
 		if (document == null) {
 			return null;
 		}
-		List<WordWithAll> wordWithAlls = new ArrayList<>();
 		Element body = document.getElementsByTag("body").first();
+		Elements errorWrappers = body.getElementsByAttributeValue("class", "error-wrapper");
+		if (!errorWrappers.isEmpty()) {
+			return null;
+		}
+		List<WordWithAll> wordWithAlls = new ArrayList<>();
 		Elements keywords = body.getElementsByAttributeValueContaining("class", "keyword");
 		if (keywords.isEmpty() || keywords.size() != 1) {
 			Logger.getLogger(AddWordController.class).debug("The count of keyword is not right!");
