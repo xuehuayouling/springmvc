@@ -14,6 +14,7 @@ public class Example {
 
 	private long id;
 	private String content;
+	private String chineseContent;
 
 	@Id
 	@Basic(optional = false)
@@ -35,4 +36,14 @@ public class Example {
 	public void setContent(String content) {
 		this.content = content;
 	}
+
+	@Column(name = "chinese_content", nullable = false)
+	public String getChineseContent() {
+		return chineseContent;
+	}
+
+	public void setChineseContent(String chineseContent) {
+		this.chineseContent = chineseContent;
+	}
+	
 }

@@ -5,7 +5,6 @@ import java.util.List;
 public class WordWithAll {
 
 	private Word word;
-	private Pronunciation pronunciation;
 	private List<Meaning> meanings;
 	
 	public Word getWord() {
@@ -14,14 +13,6 @@ public class WordWithAll {
 
 	public void setWord(Word word) {
 		this.word = word;
-	}
-
-	public Pronunciation getPronunciation() {
-		return pronunciation;
-	}
-
-	public void setPronunciation(Pronunciation pronunciation) {
-		this.pronunciation = pronunciation;
 	}
 
 	public List<Meaning> getMeanings() {

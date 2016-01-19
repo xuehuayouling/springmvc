@@ -35,24 +35,8 @@ public class WordDAO {
 		return word;
 	}
 
-	/**
-	 * 通过名字获取id，如果数据库中没有，则添加新的并返回id。
-	 * @param name
-	 * @return id
-	 */
-	public long getIdByName(String name) {
-		Word word = queryByName(name);
-		if (word != null) {
-			return word.getId();
-		} else {
-			return addByName(name);
-		}
-	}
-
-	private long addByName(String name) {
+	public long save(Word word) {
 		Session session = sessionFactory.getCurrentSession();
-		Word word = new Word();
-		word.setName(name);
 		return (long) session.save(word);
 	}
 }

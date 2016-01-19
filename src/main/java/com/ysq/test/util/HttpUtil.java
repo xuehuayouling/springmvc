@@ -40,7 +40,7 @@ public class HttpUtil {
 		return inputStream;
 	}
 
-	public static String inputStreamTOString(InputStream in) throws Exception {
+	public static String inputStreamTOString(InputStream in) throws IOException{
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		byte[] data = new byte[BUFFER_SIZE];
 		int count = -1;
@@ -50,17 +50,17 @@ public class HttpUtil {
 		return new String(outStream.toByteArray(), "UTF-8");
 	}
 
-	public static String getURLContent(String urlPath) throws Exception {
+	public static String getURLContent(String urlPath) throws IOException {
 		return inputStreamTOString(getInputStream(urlPath));
 	}
 	
-	public static boolean saveMp3ToDisk(String urlPath, String name) {
-		InputStream inputStream = getInputStream(urlPath + name);
+	public static boolean saveMp3ToDisk(String urlPath, String fileName) {
+		InputStream inputStream = getInputStream(urlPath);
 		byte[] data = new byte[BUFFER_SIZE];
 		int len = 0;
 		FileOutputStream fileOutputStream = null;
 		try {
-			fileOutputStream = new FileOutputStream(BASE_VOICE_FILE_PATH + name + ".mp3");
+			fileOutputStream = new FileOutputStream(BASE_VOICE_FILE_PATH + fileName);
 			while ((len = inputStream.read(data)) != -1) {
 				fileOutputStream.write(data, 0, len);
 			}

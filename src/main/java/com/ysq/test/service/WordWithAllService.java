@@ -10,25 +10,24 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ysq.test.dao.ExampleDAO;
 import com.ysq.test.dao.ExplainDAO;
 import com.ysq.test.dao.PartOfSpeechDAO;
-import com.ysq.test.dao.PronunciationDAO;
 import com.ysq.test.dao.WordDAO;
 import com.ysq.test.dao.WordExamDAO;
 import com.ysq.test.dao.WordPosExplainDAO;
-import com.ysq.test.dao.WordPronunciationDAO;
 import com.ysq.test.dao.WpeExampleDAO;
 import com.ysq.test.entity.Example;
-import com.ysq.test.entity.Pronunciation;
 import com.ysq.test.entity.Word;
 import com.ysq.test.entity.WordExam;
 import com.ysq.test.entity.WordPosExplain;
-import com.ysq.test.entity.WordPronunciation;
 import com.ysq.test.entity.WordWithAll;
 import com.ysq.test.entity.WordWithAll.Meaning;
 import com.ysq.test.entity.WpeExample;
+import com.ysq.test.util.HttpUtil;
 
 @Service
 @Transactional
 public class WordWithAllService {
+	private static final String BASE_URL_FOR_VOICE = "http://dict.youdao.com/dictvoice?type=%d&audio=%s";
+	
 	@Autowired
 	private WordDAO wordDAO;
 	@Autowired
@@ -42,54 +41,66 @@ public class WordWithAllService {
 	@Autowired
 	private WpeExampleDAO wpeExampleDAO;
 	@Autowired
-	private WordPronunciationDAO wordPronunciationDAO;
-	@Autowired
-	private PronunciationDAO pronunciationDAO;
-	@Autowired
 	private WordExamDAO wordExamDAO;
-	
-	private void saveWordWithAll(WordWithAll wordWithAll) {
-		long wordID = wordDAO.getIdByName(wordWithAll.getWord().getName());
+
+	private void saveWordWithAll(WordWithAll wordWithAll) throws Exception {
+		Word word = wordDAO.queryByName(wordWithAll.getWord().getName());
+		long wordID = -1;
+		if (word == null) {
+			word = wordWithAll.getWord();
+			if (word.getPronunciationE() != null) {
+				HttpUtil.saveMp3ToDisk(String.format(BASE_URL_FOR_VOICE, 1, word.getName()), word.getName() + "_1.mp3");
+				word.setPronunciationVoicePathE(word.getName() + "_1.mp3");
+			}
+			if (word.getPronunciationU() != null) {
+				HttpUtil.saveMp3ToDisk(String.format(BASE_URL_FOR_VOICE, 2, word.getName()), word.getName() + "_2.mp3");
+				word.setPronunciationVoicePathU(word.getName() + "_2.mp3");
+			}
+			wordID = wordDAO.save(word);
+		} else {
+			wordID = word.getId();
+		}
+		if (wordID < 0) {
+			throw new Exception();
+		}
 		try {
 			WordExam wordExam = new WordExam();
 			wordExam.setExamID(1);
 			wordExam.setWordID(wordID);
-			wordExamDAO.save(wordExam);
+			if (wordExamDAO.query(1, wordID) == null) {
+				wordExamDAO.save(wordExam);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		if (wordWithAll.getPronunciation() != null) {
-			Pronunciation pronunciation = pronunciationDAO.queryBySpell(wordWithAll.getPronunciation().getSpell());
-			long pronunciationID;
-			if (pronunciation == null) {
-				pronunciationID = pronunciationDAO.save(wordWithAll.getPronunciation());
-			} else {
-				pronunciationID = pronunciation.getId();
-			}
-			WordPronunciation wordPronunciation = new WordPronunciation();
-			wordPronunciation.setWordID(wordID);
-			wordPronunciation.setPronunciationID(pronunciationID);
-			wordPronunciationDAO.save(wordPronunciation);
 		}
 		for (WordWithAll.Meaning meaning : wordWithAll.getMeanings()) {
 			long partOfSpeechId = partOfSpeechDAO.getIdByName(meaning.getPartOfSpeech().getName());
 			long explainId = explainDAO.getIdByContent(meaning.getExplain().getContent());
-				WordPosExplain wordPosExplain = new WordPosExplain();
-				wordPosExplain.setWordID(wordID);
-				wordPosExplain.setPartOfSpeechID(partOfSpeechId);
-				wordPosExplain.setExplainID(explainId);
-				long wordPosExplainID = wordPosExplainDAO.save(wordPosExplain);
-				for (Example example : meaning.getExamples()) {
-					long exampleID = exampleDAO.getIdByContent(example.getContent());
-					WpeExample wpeExample = new WpeExample();
-					wpeExample.setExampleID(exampleID);
-					wpeExample.setWpeID(wordPosExplainID);
-					wpeExampleDAO.save(wpeExample);
+			WordPosExplain wordPosExplain = new WordPosExplain();
+			wordPosExplain.setWordID(wordID);
+			wordPosExplain.setPartOfSpeechID(partOfSpeechId);
+			wordPosExplain.setExplainID(explainId);
+			long wordPosExplainID = wordPosExplainDAO.save(wordPosExplain);
+			for (Example example : meaning.getExamples()) {
+				long exampleID = -1;
+				Example exampleExist = exampleDAO.queryByContent(example.getContent());
+				if (exampleExist == null) {
+					exampleID = exampleDAO.save(example);
+				} else {
+					exampleID = exampleExist.getId();
 				}
+				if (exampleID < 0) {
+					throw new Exception();
+				}
+				WpeExample wpeExample = new WpeExample();
+				wpeExample.setExampleID(exampleID);
+				wpeExample.setWpeID(wordPosExplainID);
+				wpeExampleDAO.save(wpeExample);
+			}
 		}
 	}
 
-	public void saveWordWithAll(List<WordWithAll> wordWithAlls) {
+	public void saveWordWithAll(List<WordWithAll> wordWithAlls) throws Exception {
 		for (WordWithAll wordWithAll : wordWithAlls) {
 			saveWordWithAll(wordWithAll);
 		}
@@ -122,7 +133,7 @@ public class WordWithAllService {
 			meaning.setExamples(examples);
 			meanings.add(meaning);
 		}
-		wordWithAll.setMeanings(meanings );
+		wordWithAll.setMeanings(meanings);
 		wordWithAlls.add(wordWithAll);
 		return wordWithAlls;
 	}

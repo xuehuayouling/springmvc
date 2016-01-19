@@ -24,23 +24,7 @@ public class ExampleDAO {
 		return sessionFactory;
 	}
 
-	public long getIdByContent(String content) {
-		Example example = queryByContent(content);
-		if (example != null) {
-			return example.getId();
-		} else {
-			return addByContent(content);
-		}
-	}
-
-	private long addByContent(String content) {
-		Session session = sessionFactory.getCurrentSession();
-		Example example = new Example();
-		example.setContent(content);
-		return (long) session.save(example);
-	}
-
-	private Example queryByContent(String content) {
+	public Example queryByContent(String content) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.createQuery(BASE_QUERY_SQL_BY_CONTENT);
 		Example example = (Example) query.setString("content", content).uniqueResult();
@@ -52,5 +36,10 @@ public class ExampleDAO {
 		Query query = session.createQuery(BASE_QUERY_SQL_BY_ID);
 		Example example = (Example) query.setLong("id", exampleID).uniqueResult();
 		return example;
+	}
+
+	public long save(Example example) {
+		Session session = sessionFactory.getCurrentSession();
+		return (long) session.save(example);
 	}
 }

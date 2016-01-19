@@ -14,6 +14,7 @@ public class Explain {
 
 	private long id;
 	private String content;
+	private String chineseMean;
 
 	@Id
 	@Basic(optional = false)
@@ -34,6 +35,15 @@ public class Explain {
 
 	public void setContent(String content) {
 		this.content = content;
+	}
+
+	@Column(name = "chinese_mean")
+	public String getChineseMean() {
+		return chineseMean;
+	}
+
+	public void setChineseMean(String chineseMean) {
+		this.chineseMean = chineseMean;
 	}
 
 }
