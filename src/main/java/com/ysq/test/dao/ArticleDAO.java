@@ -1,5 +1,8 @@
 package com.ysq.test.dao;
 
+import java.util.List;
+
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +13,7 @@ import com.ysq.test.entity.Article;
 @Repository
 public class ArticleDAO {
 
-//	private static final String BASE_QUERY_SQL = "from Word as t_word where t_word.name=:name";
+	private static final String BASE_QUERY_SQL = "from Article ORDER BY id DESC";
 	@Autowired
 	private SessionFactory sessionFactory;
 
@@ -25,5 +28,11 @@ public class ArticleDAO {
 	public long save(Article article) {
 		Session session = sessionFactory.getCurrentSession();
 		return (long) session.save(article);
+	}
+
+	public List<Article> queryList() {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery(BASE_QUERY_SQL);
+		return query.list();
 	}
 }
