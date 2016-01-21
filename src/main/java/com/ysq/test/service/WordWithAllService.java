@@ -18,6 +18,7 @@ import com.ysq.test.entity.Example;
 import com.ysq.test.entity.Explain;
 import com.ysq.test.entity.Word;
 import com.ysq.test.entity.WordExam;
+import com.ysq.test.entity.WordForShow;
 import com.ysq.test.entity.WordPosExplain;
 import com.ysq.test.entity.WordWithAll;
 import com.ysq.test.entity.WordWithAll.Meaning;
@@ -28,7 +29,7 @@ import com.ysq.test.util.HttpUtil;
 @Transactional
 public class WordWithAllService {
 	private static final String BASE_URL_FOR_VOICE = "http://dict.youdao.com/dictvoice?type=%d&audio=%s";
-	
+
 	@Autowired
 	private WordDAO wordDAO;
 	@Autowired
@@ -137,7 +138,7 @@ public class WordWithAllService {
 		for (WordPosExplain wordPosExplain : wordPosExplains) {
 			Meaning meaning = wordWithAll.new Meaning();
 			meaning.setExplain(explainDAO.queryByID(wordPosExplain.getExplainID()));
-			meaning.setPartOfSpeech(partOfSpeechDAO.queryByID(wordPosExplain.getExplainID()));
+			meaning.setPartOfSpeech(partOfSpeechDAO.queryByID(wordPosExplain.getPartOfSpeechID()));
 			List<WpeExample> wpeExamples = wpeExampleDAO.queryByWpeID(wordPosExplain.getId());
 			List<Example> examples = new ArrayList<>();
 			for (WpeExample wpeExample : wpeExamples) {
@@ -151,7 +152,29 @@ public class WordWithAllService {
 		wordWithAlls.add(wordWithAll);
 		return wordWithAlls;
 	}
+
 	public List<WordWithAll> getWordWithAllsByRandom() {
 		return getWordWithAllsByWord(wordDAO.queryByRandom());
+	}
+
+	public WordForShow getWordForShow(WordWithAll wordWithAll) {
+		WordForShow wordForShow = new WordForShow();
+		StringBuffer title = new StringBuffer();
+		title.append("<strong style=font-size:20px>").append(wordWithAll.getWord().getName()).append("</strong>");
+		wordForShow.setTitle(title.toString());
+		StringBuffer content = new StringBuffer();
+		for (WordWithAll.Meaning meaning : wordWithAll.getMeanings()) {
+			content.append("<li>").append("<div  style=background-color:#EFF5F8;>").append("<p font-size:12px;>").append(meaning.getPartOfSpeech().getName()).append("  ")
+					.append(meaning.getExplain().getContent()).append("</p>").append("</div>");
+			if (meaning.getExamples().size() > 0) {
+				for (Example example : meaning.getExamples()) {
+					content.append("<div  style=margin-left:20px;>").append("<p font-size:12px;>").append(example.getContent())
+					.append("</p>").append("</div>");
+				}
+			}
+			content.append("</li>");
+		}
+		wordForShow.setContent(content.toString());
+		return wordForShow;
 	}
 }

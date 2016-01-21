@@ -121,20 +121,21 @@ public class AddWordController {
 		return mv;
 	}
 	
-	@RequestMapping(value = "/random")
-	public ModelAndView random() {
+	@RequestMapping(value = "/view")
+	public ModelAndView viewWord() {
 		ModelAndView mv = new ModelAndView();
-		List<WordWithAll> wordWithAlls = wordWithAllService.getWordWithAllsByRandom();
-		String content = "success";
-		if (wordWithAlls == null) {
-				content = "no data";
-		}
-		if (wordWithAlls != null) {
-			content = JsonUtil.getJsonFromObject(wordWithAlls);
-		}
-		mv.addObject("result", content);
-		mv.setViewName("hello");
+		mv.setViewName("meetwords");
 		return mv;
+	}
+	
+	@RequestMapping(value = "/random")
+	@ResponseBody
+	public String random() {
+		List<WordWithAll> wordWithAlls = wordWithAllService.getWordWithAllsByRandom();
+		if (wordWithAlls.size() > 0) {
+			return JsonUtil.getJsonFromObject(wordWithAllService.getWordForShow(wordWithAlls.get(0)));
+		}
+		return null;
 	}
 
 	private List<WordWithAll> addWord(String name) {
