@@ -118,12 +118,19 @@ public class WordWithAllService {
 	}
 
 	public List<WordWithAll> getWordWithAllsByWordName(String name) {
-		List<WordWithAll> wordWithAlls = new ArrayList<>();
-		WordWithAll wordWithAll = new WordWithAll();
 		Word word = wordDAO.queryByName(name);
 		if (word == null) {
 			return null;
 		}
+		return getWordWithAllsByWord(word);
+	}
+
+	private List<WordWithAll> getWordWithAllsByWord(Word word) {
+		if (word == null) {
+			return null;
+		}
+		List<WordWithAll> wordWithAlls = new ArrayList<>();
+		WordWithAll wordWithAll = new WordWithAll();
 		wordWithAll.setWord(word);
 		List<Meaning> meanings = new ArrayList<>();
 		List<WordPosExplain> wordPosExplains = wordPosExplainDAO.queryByWordID(word.getId());
@@ -143,5 +150,8 @@ public class WordWithAllService {
 		wordWithAll.setMeanings(meanings);
 		wordWithAlls.add(wordWithAll);
 		return wordWithAlls;
+	}
+	public List<WordWithAll> getWordWithAllsByRandom() {
+		return getWordWithAllsByWord(wordDAO.queryByRandom());
 	}
 }

@@ -3,6 +3,8 @@ package com.ysq.test.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.annotation.Resource;
 
@@ -13,6 +15,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -22,6 +25,7 @@ import com.ysq.test.entity.Explain;
 import com.ysq.test.entity.PartOfSpeech;
 import com.ysq.test.entity.Word;
 import com.ysq.test.entity.WordWithAll;
+import com.ysq.test.service.WordService;
 import com.ysq.test.service.WordWithAllService;
 import com.ysq.test.util.HttpUtil;
 import com.ysq.test.util.JsonUtil;
@@ -36,6 +40,8 @@ public class AddWordController {
 
 	@Resource(name = "wordWithAllService")
 	private WordWithAllService wordWithAllService;
+	@Resource(name = "wordService")
+	private WordService wordService;
 
 	@RequestMapping(value = "/test")
 	@ResponseBody
@@ -60,6 +66,42 @@ public class AddWordController {
 		return JsonUtil.getJsonFromObject(wordWithAlls);
 	}
 
+	@RequestMapping(value = "/addwords", method=RequestMethod.GET)
+	public ModelAndView addWordsView() {
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("wordsInput");
+		return mv;
+	}
+	
+	@RequestMapping(value = "/addwords", method=RequestMethod.POST)
+	public ModelAndView addWords(@RequestParam(value = "words", required = true) String words, @RequestParam(value = "test", required = false) boolean test) {
+		ModelAndView mv = new ModelAndView();
+		ExecutorService pool = Executors.newFixedThreadPool(8);
+		final StringBuffer uncollins = new StringBuffer();
+		String[] wordArray = words.split("\n");
+		for (String word : wordArray) {
+			final String word1 = word.replaceAll("\r", " ").trim();
+			if (wordService.queryByName(word1) == null) {
+				if (test) {
+					uncollins.append(word1).append("\n");
+				} else {
+					pool.execute(new Runnable() {
+						
+						@Override
+						public void run() {
+							if (addWord(word1) == null) {
+							}
+						}
+					});
+				}
+			}
+		}
+		pool.shutdown();
+		mv.addObject("uncollins", uncollins.toString());
+		mv.setViewName("wordsInput");
+		return mv;
+	}
+	
 	@RequestMapping(value = "/query")
 	public ModelAndView query(@RequestParam(value = "name", required = true) String name) {
 		ModelAndView mv = new ModelAndView();
@@ -78,6 +120,22 @@ public class AddWordController {
 		mv.setViewName("hello");
 		return mv;
 	}
+	
+	@RequestMapping(value = "/random")
+	public ModelAndView random() {
+		ModelAndView mv = new ModelAndView();
+		List<WordWithAll> wordWithAlls = wordWithAllService.getWordWithAllsByRandom();
+		String content = "success";
+		if (wordWithAlls == null) {
+				content = "no data";
+		}
+		if (wordWithAlls != null) {
+			content = JsonUtil.getJsonFromObject(wordWithAlls);
+		}
+		mv.addObject("result", content);
+		mv.setViewName("hello");
+		return mv;
+	}
 
 	private List<WordWithAll> addWord(String name) {
 		List<WordWithAll> wordWithAlls = getWordWithAllsFormYoudao(name);
@@ -86,10 +144,11 @@ public class AddWordController {
 				wordWithAllService.saveWordWithAll(wordWithAlls);
 				return wordWithAlls;
 			} catch (Exception e) {
+				Logger.getLogger(getClass()).debug("save failure: " + name);
 				e.printStackTrace();
 			}
 		} else {
-			Logger.getLogger(getClass()).debug("analyse failure");
+			Logger.getLogger(getClass()).debug("analyse failure: " + name);
 		}
 		return null;
 	}

@@ -21,7 +21,7 @@ public class WordService {
 		this.wordDAO = wordDAO;
 	}
 
-	public Word getByName(String name) {
+	public Word queryByName(String name) {
 		return wordDAO.queryByName(name);
 	}
 }

@@ -1,5 +1,8 @@
 package com.ysq.test.dao;
 
+import java.util.List;
+import java.util.Random;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -12,6 +15,7 @@ import com.ysq.test.entity.Word;
 public class WordDAO {
 
 	private static final String BASE_QUERY_SQL = "from Word as t_word where t_word.name=:name";
+	private static final String BASE_QUERY_SQL_BY_ID = "from Word as t_word where t_word.id=:id";
 	@Autowired
 	private SessionFactory sessionFactory;
 
@@ -25,6 +29,7 @@ public class WordDAO {
 
 	/**
 	 * 通过名字获取实例，如果没有则返回null
+	 * 
 	 * @param name
 	 * @return
 	 */
@@ -33,6 +38,17 @@ public class WordDAO {
 		Query query = session.createQuery(BASE_QUERY_SQL);
 		Word word = (Word) query.setString("name", name).uniqueResult();
 		return word;
+	}
+
+	public Word queryByRandom() {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery("from Word");
+		List<Word> words = query.list();
+		if (words.size() > 0) {
+			Random random = new Random(words.size());
+			return words.get(random.nextInt());
+		}
+		return null;
 	}
 
 	public long save(Word word) {
