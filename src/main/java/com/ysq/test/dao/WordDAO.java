@@ -45,8 +45,8 @@ public class WordDAO {
 		Query query = session.createQuery("from Word");
 		List<Word> words = query.list();
 		if (words.size() > 0) {
-			Random random = new Random(words.size());
-			return words.get(random.nextInt());
+			Random random = new Random();
+			return words.get(random.nextInt(words.size()));
 		}
 		return null;
 	}
