@@ -36,7 +36,6 @@ import com.ysq.test.util.TextUtil;
 public class AddWordController {
 	private static final String BASE_URL = "http://www.collinsdictionary.com/dictionary/american-cobuild-learners/";
 	private static final String URL_FOR_PHONETIC = "http://www.collinsdictionary.com/dictionary/american/";
-	private static final String BASE_URL_FOR_VOICE = "http://dict.youdao.com/dictvoice?type=2&audio=";
 
 	@Resource(name = "wordWithAllService")
 	private WordWithAllService wordWithAllService;

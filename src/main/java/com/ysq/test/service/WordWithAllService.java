@@ -160,16 +160,19 @@ public class WordWithAllService {
 	public WordForShow getWordForShow(WordWithAll wordWithAll) {
 		WordForShow wordForShow = new WordForShow();
 		StringBuffer title = new StringBuffer();
-		title.append("<strong style=font-size:20px>").append(wordWithAll.getWord().getName()).append("</strong>");
+		title.append("<p>").append("<span style=font-size:25px>").append(wordWithAll.getWord().getName())
+				.append("</span>").append("\t").append("[").append(wordWithAll.getWord().getPronunciationU())
+				.append("]").append("</p>").append("<br>");
 		wordForShow.setTitle(title.toString());
 		StringBuffer content = new StringBuffer();
 		for (WordWithAll.Meaning meaning : wordWithAll.getMeanings()) {
-			content.append("<li>").append("<div  style=background-color:#EFF5F8;>").append("<p font-size:12px;>").append(meaning.getPartOfSpeech().getName()).append("  ")
-					.append(meaning.getExplain().getContent()).append("</p>").append("</div>");
+			content.append("<li>").append("<div  style=background-color:#EFF5F8;>").append("<p font-size:12px;>")
+					.append(meaning.getPartOfSpeech().getName()).append("  ").append(meaning.getExplain().getContent())
+					.append("</p>").append("</div>");
 			if (meaning.getExamples().size() > 0) {
 				for (Example example : meaning.getExamples()) {
-					content.append("<div  style=margin-left:20px;>").append("<p font-size:12px;>").append(example.getContent())
-					.append("</p>").append("</div>");
+					content.append("<div  style=margin-left:20px;>").append("<p font-size:12px;>")
+							.append(example.getContent()).append("</p>").append("</div>");
 				}
 			}
 			content.append("</li>");
