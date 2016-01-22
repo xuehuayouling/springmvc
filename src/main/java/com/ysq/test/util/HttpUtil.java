@@ -41,6 +41,9 @@ public class HttpUtil {
 	}
 
 	public static String inputStreamTOString(InputStream in) throws IOException{
+		if (in == null) {
+			return null;
+		}
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		byte[] data = new byte[BUFFER_SIZE];
 		int count = -1;

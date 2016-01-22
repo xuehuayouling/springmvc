@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "t_wpe_example")
+@Table(name = "tr_wpe_example")
 public class WpeExample {
 
 	private long id;

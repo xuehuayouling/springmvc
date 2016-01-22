@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "t_word_pos_explain")
+@Table(name = "tr_word_pos_explain")
 public class WordPosExplain {
 
 	private long id;
