@@ -24,6 +24,7 @@ import com.ysq.test.entity.WordWithAll;
 import com.ysq.test.entity.WordWithAll.Meaning;
 import com.ysq.test.entity.WpeExample;
 import com.ysq.test.util.HttpUtil;
+import com.ysq.test.util.TextUtil;
 
 @Service
 @Transactional
@@ -160,9 +161,16 @@ public class WordWithAllService {
 	public WordForShow getWordForShow(WordWithAll wordWithAll) {
 		WordForShow wordForShow = new WordForShow();
 		StringBuffer title = new StringBuffer();
+		String pronunciation = wordWithAll.getWord().getPronunciationE();
+		String pronunciationVioce = wordWithAll.getWord().getPronunciationVoicePathE();
+		if (TextUtil.isEmpty(pronunciation)) {
+			pronunciation = wordWithAll.getWord().getPronunciationU();
+			pronunciationVioce = wordWithAll.getWord().getPronunciationVoicePathU();
+		}
 		title.append("<p>").append("<span style=font-size:25px>").append(wordWithAll.getWord().getName())
-				.append("</span>").append("\t").append("[").append(wordWithAll.getWord().getPronunciationU())
-				.append("]").append("</p>").append("<br>");
+				.append("</span>").append("\t").append("<a href=# onclick=voice_play()>").append("[").append(pronunciation)
+				.append("]").append("</a>").append("</p>").append("<br>")
+				.append("<audio id=pronunciation_voice src=../sounds/").append(pronunciationVioce).append("></audio>");
 		wordForShow.setTitle(title.toString());
 		StringBuffer content = new StringBuffer();
 		for (WordWithAll.Meaning meaning : wordWithAll.getMeanings()) {
