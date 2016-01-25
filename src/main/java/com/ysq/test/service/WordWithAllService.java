@@ -168,20 +168,24 @@ public class WordWithAllService {
 			pronunciationVioce = wordWithAll.getWord().getPronunciationVoicePathU();
 		}
 		title.append("<p>").append("<span style=font-size:25px>").append(wordWithAll.getWord().getName())
-				.append("</span>").append("\t").append("<a href=# onclick=voice_play()>").append("[").append(pronunciation)
-				.append("]").append("</a>").append("</p>").append("<br>")
-				.append("<audio id=pronunciation_voice src=../sounds/").append(pronunciationVioce).append("></audio>");
+				.append("</span>").append("\t");
+		if (!TextUtil.isEmpty(pronunciationVioce)) {
+			title.append("<a href=# onclick=voice_play()>").append("[").append(pronunciation).append("]").append("</a>")
+					.append("<audio id=pronunciation_voice src=../sounds/").append(pronunciationVioce)
+					.append("></audio>");
+		}
+		title.append("</p>").append("<br>");
 		wordForShow.setTitle(title.toString());
 		StringBuffer content = new StringBuffer();
 		for (WordWithAll.Meaning meaning : wordWithAll.getMeanings()) {
 			content.append("<li>").append("<div  style=background-color:#EFF5F8;>").append("<p font-size:12px;>")
 					.append(meaning.getPartOfSpeech().getName()).append("  ").append(meaning.getExplain().getContent())
-					.append("</p>").append("</div>");
+					.append("  ").append(meaning.getExplain().getChineseMean()).append("</p>").append("</div>");
 			int i = 0;
 			if (meaning.getExamples().size() > 0) {
 				for (Example example : meaning.getExamples()) {
-					content.append("<div  style=margin-left:20px;>").append("<p font-size:12px;>")
-							.append(++i).append(". ").append(example.getContent()).append("</p>").append("</div>");
+					content.append("<div  style=margin-left:20px;>").append("<p font-size:12px;>").append(++i)
+							.append(". ").append(example.getContent()).append("</p>").append("</div>");
 				}
 			}
 			content.append("</li>");
