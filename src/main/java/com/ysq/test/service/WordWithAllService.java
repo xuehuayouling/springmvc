@@ -169,10 +169,11 @@ public class WordWithAllService {
 			content.append("<li>").append("<div  style=background-color:#EFF5F8;>").append("<p font-size:12px;>")
 					.append(meaning.getPartOfSpeech().getName()).append("  ").append(meaning.getExplain().getContent())
 					.append("</p>").append("</div>");
+			int i = 0;
 			if (meaning.getExamples().size() > 0) {
 				for (Example example : meaning.getExamples()) {
 					content.append("<div  style=margin-left:20px;>").append("<p font-size:12px;>")
-							.append(example.getContent()).append("</p>").append("</div>");
+							.append(++i).append(". ").append(example.getContent()).append("</p>").append("</div>");
 				}
 			}
 			content.append("</li>");
