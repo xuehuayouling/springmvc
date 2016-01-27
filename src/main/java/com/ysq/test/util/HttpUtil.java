@@ -12,6 +12,7 @@ public class HttpUtil {
 
 	private static final int BUFFER_SIZE = 102400;
 	public static final String BASE_VOICE_FILE_PATH = "/Users/ysq/Music/dictionaryvoices/";
+//	public static final String BASE_VOICE_FILE_PATH = "/root/dictionaryvoices/";
 	public static InputStream getInputStream(String urlPath) {
 		InputStream inputStream = null;
 		HttpURLConnection httpURLConnection = null;

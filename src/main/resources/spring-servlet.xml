@@ -32,6 +32,7 @@
 	<mvc:resources mapping="/scripts/**" location="/scripts/" />
 	<mvc:resources mapping="/images/**" location="/images/" />
 	<mvc:resources mapping="/sounds/**" location="file:/Users/ysq/Music/dictionaryvoices/" />
+	<!-- <mvc:resources mapping="/sounds/**" location="file:/root/dictionaryvoices/" /> -->
 	<!--配置拦截器, 多个拦截器,顺序执行 -->
 	<mvc:interceptors>
 		<mvc:interceptor>

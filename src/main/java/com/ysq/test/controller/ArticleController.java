@@ -42,6 +42,9 @@ public class ArticleController {
 			{"\nRoss:", "<br><span style=\"color:red;\">Ross:</span>"},
 			{"\nRachel:", "<br><span style=\"color:red;\">Rachel:</span>"}
 			};
+	public static final String[][] P_VIEW = {
+			{"\t", "</p><p style=text-indent:2em;>"}
+			};
 	@RequestMapping(value = "/addArticle", method=RequestMethod.GET)
 	public ModelAndView view() {
 		ModelAndView mv = new ModelAndView();
@@ -67,7 +70,18 @@ public class ArticleController {
 	public ModelAndView article() {
 		ModelAndView mv = new ModelAndView();
 		Article article = articleService.queryList().get(0);
-		for (String[] names : FRIENDS_NAMES_VIEW) {
+		StringBuffer buffer = new StringBuffer();
+		for (String str : article.getContent().split("[ ,\\n]")){
+			if (str.startsWith("\t")) {
+				buffer.append("\t").append("<a onclick=clickborder('").append(str.substring(2)).append("')>").append(str.substring(2)).append("</a>").append(" ");
+			} else if (str.endsWith(".")) {
+				buffer.append("<a onclick=clickborder('").append(str.substring(0, str.length() - 1)).append("')>").append(str.substring(0, str.length() - 1)).append("</a>").append(".").append(" ");
+			} else {
+				buffer.append("<a onclick=clickborder('").append(str).append("')>").append(str).append("</a>").append(" ");
+			}
+		}
+		article.setContent(buffer.toString());
+		for (String[] names : P_VIEW) {
 			article.setContent(article.getContent().replaceAll(names[0], names[1]));
 		}
 		mv.addObject("article", article);
@@ -96,7 +110,7 @@ public class ArticleController {
 	
 	@RequestMapping(value = "/addArticle", method=RequestMethod.POST)
 	public ModelAndView addArticle(@RequestParam(value = "title", required = true) String title,
-			@RequestParam(value = "content", required = true) String content, @RequestParam(value = "friends", required = true) boolean friends) {
+			@RequestParam(value = "content", required = true) String content, @RequestParam(value = "friends", required = false) boolean friends) {
 		ModelAndView mv = new ModelAndView();
 		Article article = new Article();
 		article.setTitle(title);
@@ -109,6 +123,10 @@ public class ArticleController {
 		articleService.save(article);
 		if (friends) {
 			for (String[] names : FRIENDS_NAMES_VIEW) {
+				article.setContent(article.getContent().replaceAll(names[0], names[1]));
+			}
+		} else {
+			for (String[] names : P_VIEW) {
 				article.setContent(article.getContent().replaceAll(names[0], names[1]));
 			}
 		}
