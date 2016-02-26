@@ -1,18 +1,15 @@
 package com.ysq.test.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.ysq.test.dao.UserDAO;
 import com.ysq.test.entity.User;
 
+@Service
 public class UserService {
+	@Autowired
 	private UserDAO userDao;
-
-	public UserDAO getUserDao() {
-		return userDao;
-	}
-
-	public void setUserDao(UserDAO userDao) {
-		this.userDao = userDao;
-	}
 
 	public User login(String name, String password, String sessionID) {
 		User user = findUser(name, password);

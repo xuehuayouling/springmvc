@@ -18,6 +18,7 @@
 	<!-- Hibernate4 -->
 	<!-- 加载资源文件  其中包含变量信息，必须在Spring配置文件的最前面加载，即第一个加载-->
 	<context:property-placeholder location="classpath:persistence-mysql.properties" />
+	<context:component-scan base-package="com.ysq.test"/>
 	
 	<bean id="sessionFactory" 
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">

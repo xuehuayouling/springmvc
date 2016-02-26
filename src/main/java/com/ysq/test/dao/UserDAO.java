@@ -1,15 +1,14 @@
 package com.ysq.test.dao;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.springframework.stereotype.Repository;
 
 import com.ysq.test.entity.User;
-import com.ysq.test.util.SessionContext;
 import com.ysq.test.util.TextUtil;
 
+@Repository
 public class UserDAO {
 
 	private SessionFactory sessionFactory;
