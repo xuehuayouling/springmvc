@@ -3,6 +3,7 @@ package com.ysq.test.dao;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.ysq.test.entity.User;
@@ -11,15 +12,8 @@ import com.ysq.test.util.TextUtil;
 @Repository
 public class UserDAO {
 
+	@Autowired
 	private SessionFactory sessionFactory;
-
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
-
-	public SessionFactory getSessionFactory() {
-		return sessionFactory;
-	}
 
 	public User findUser(String name, String password) {
 		if (TextUtil.isEmpty(name) || TextUtil.isEmpty(password)) {
@@ -32,7 +26,7 @@ public class UserDAO {
 	
 	public User addToken(User user, String sessionID) {
 		if (user != null) {
-			Session session = sessionFactory.getCurrentSession();
+			Session session = getCurrentSession();
 			user.setToken(sessionID);
 			session.saveOrUpdate(user);
 			session.flush();
@@ -52,12 +46,20 @@ public class UserDAO {
 	}
 	
 	private User queryUserBySql(String sql) {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = getCurrentSession();
 		Query query = session.createQuery(sql);
 		if (query.list().size() > 0) {
 			User user = (User) query.list().get(0);
 			return user;
 		}
 		return null;
+	}
+
+	private Session getCurrentSession() {
+		return sessionFactory.getCurrentSession();
+	}
+
+	public void add(User user) {
+		getCurrentSession().save(user);
 	}
 }
