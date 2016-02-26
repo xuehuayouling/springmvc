@@ -21,7 +21,7 @@ public class LoginController {
 	@Resource(name = "userService")
 	private UserService service;
 
-	@RequestMapping(value = "/test", method = RequestMethod.GET)
+	@RequestMapping(value = "/test")
 	public ModelAndView count() {
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("message", "test success");
@@ -29,16 +29,9 @@ public class LoginController {
 		return mv;
 	}
 
-	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	@RequestMapping(value = "/login")
 	@ResponseBody
-	public String validPost(@RequestParam(value = "name") String name,
-			@RequestParam(value = "password") String password, HttpServletRequest request) {
-		return tryLogin(name, password, request.getSession().getId());
-	}
-
-	@RequestMapping(value = "/login", method = RequestMethod.GET)
-	@ResponseBody
-	public String validGet(@RequestParam(value = "name") String name,
+	public String valid(@RequestParam(value = "name") String name,
 			@RequestParam(value = "password") String password, HttpServletRequest request) {
 		return tryLogin(name, password, request.getSession().getId());
 	}
