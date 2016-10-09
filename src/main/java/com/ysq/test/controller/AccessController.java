@@ -27,6 +27,11 @@ public class AccessController {
 		mv.setViewName("hello");
 		return mv;
 	}
+	
+	@RequestMapping(value = "/hello")
+	public String hello() {
+		return "hello.html";
+	}
 
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
 	@ResponseBody

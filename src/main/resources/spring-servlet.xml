@@ -61,6 +61,7 @@
 	<mvc:resources mapping="/styles/**" location="/styles/" />
 	<mvc:resources mapping="/scripts/**" location="/scripts/" />
 	<mvc:resources mapping="/images/**" location="/images/" />
+	<mvc:resources mapping="/third/**" location="/third/" />
 	<!--配置拦截器, 多个拦截器,顺序执行 -->
 	<mvc:interceptors>
 		<mvc:interceptor>
@@ -72,9 +73,21 @@
 	</mvc:interceptors>
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="prefix" value="/WEB-INF/views/" />
+		<property name="prefix" value="/views/" />
 		<property name="suffix" value=".jsp" />
+		<property name="order" value="1" />
 	</bean>
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+    	<property name="viewClass" value="org.springframework.web.servlet.view.freemarker.FreeMarkerView" />
+    	<property name="contentType" value="text/html; charset=utf-8"/>
+    	<property name="order" value="0" />
+  	</bean>
+  	<bean id="freeMarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+    	<!-- 模板根目录 -->
+    	<property name="templateLoaderPaths" value="/views/" />
+    	<!-- 编码格式 -->
+    	<property name="defaultEncoding" value="utf-8" />
+  	</bean>
 	<bean id="multipartResolver"
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 		<property name="defaultEncoding" value="utf-8"></property>
