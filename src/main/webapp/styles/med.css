@@ -4,6 +4,8 @@
 
 .ui-field-contain {
 	display: flex;
+	margin: 0;
+	padding: .8em 0;
 	border-top: 1px solid #A7A7A7;
 }
 
@@ -69,4 +71,8 @@
 	height: 3em;
 	width: 3em;
 	border-radius: 1.5em;
+}
+
+.ui-btn label {
+	text-align: left;
 }
