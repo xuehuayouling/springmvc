@@ -33,6 +33,11 @@ public class AccessController {
 		return "hello.html";
 	}
 
+	@RequestMapping(value = "/hello1")
+	public String hello1() {
+		return "test/hello.html";
+	}
+
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
 	@ResponseBody
 	public Object saveEssays(HttpServletRequest request, HttpServletResponse response, String token) throws Exception {

@@ -7,10 +7,8 @@
 
 $.ajaxSettings.async = false;
 
-var contextPath = "";
-if (window.rootPath) {
-	contextPath = window.rootPath
-}
+var contextPath = "/springmvc/";
+
 seajs && seajs.config({
 	base: contextPath,
 	alias: {
