@@ -30,12 +30,12 @@ public class AccessController {
 	
 	@RequestMapping(value = "/hello")
 	public String hello() {
-		return "hello.html";
+		return "views/hello.html";
 	}
 
 	@RequestMapping(value = "/hello1")
 	public String hello1() {
-		return "test/hello.html";
+		return "views/test/hello.html";
 	}
 
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)

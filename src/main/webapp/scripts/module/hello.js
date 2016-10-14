@@ -28,31 +28,10 @@ define(function (require, exports, module) {
         var sDate = new Date();
         var eDate = new Date();
         eDate.setDate(eDate.getDate() + 110);
-        var dateData = dateGenerator.createa(sDate, eDate);
-        var years = [];
-        var months = [];
-        var days = [];
-        for (var y in dateData) {
-            var year = {};
-            year.id = y;
-            year.value = y;
-            year.parentId = 0;
-            years.push(year);
-            for (var m in dateData[y]) {
-                var month = {}
-                month.id = y + m;
-                month.value = m;
-                month.parentId = year.id;
-                months.push(month);
-                dateData[y][m].forEach(function (d) {
-                    var day = {}
-                    day.id = y + m + d;
-                    day.value = d;
-                    day.parentId = month.id;
-                    days.push(day);
-                });
-            }
-        }
+        var dateData = dateGenerator.createForISelect(sDate, eDate);
+        var years = dateData.years;
+        var months = dateData.months;
+        var days = dateData.days;
         var iosSelect = new IosSelect(3,
             [years, months, days],
             {

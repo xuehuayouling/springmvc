@@ -129,8 +129,6 @@ define(function(requrie ,exports ,module) {
                 }
             }
         }
-
-
         return ret;
     }
 
@@ -261,7 +259,7 @@ define(function(requrie ,exports ,module) {
      * @param {Date} eDate 结束日期
      * @returns {{}}
      */
-    exports.createa = function(sDate, eDate) {
+    exports.create = function(sDate, eDate) {
         var nowYear = sDate.getFullYear();
         var eYear = eDate.getFullYear();
 
@@ -291,4 +289,36 @@ define(function(requrie ,exports ,module) {
         return ret;
     }
 
+    exports.createForISelect = function(sDate, eDate) {
+        var dateData = this.create(sDate, eDate);
+        var years = [];
+        var months = [];
+        var days = [];
+        for (var y in dateData) {
+            var year = {};
+            year.id = y;
+            year.value = y;
+            year.parentId = 0;
+            years.push(year);
+            for (var m in dateData[y]) {
+                var month = {}
+                month.id = y + m;
+                month.value = m;
+                month.parentId = year.id;
+                months.push(month);
+                dateData[y][m].forEach(function (d) {
+                    var day = {}
+                    day.id = y + m + d;
+                    day.value = d;
+                    day.parentId = month.id;
+                    days.push(day);
+                });
+            }
+        }
+        var data = {};
+        data.years = years;
+        data.months = months;
+        data.days = days;
+        return data;
+    }
 });
