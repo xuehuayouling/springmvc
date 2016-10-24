@@ -17,10 +17,10 @@ import org.springframework.web.servlet.ModelAndView;
 import com.ysq.test.entity.User;
 
 @Controller
-@RequestMapping("/access")
-public class AccessController {
+@RequestMapping("/test")
+public class TestController {
 
-	@RequestMapping(value = "/test", method = RequestMethod.GET)
+	@RequestMapping(value = "/test")
 	public ModelAndView count() {
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("message", "test success");
