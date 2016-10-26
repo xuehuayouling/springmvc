@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jee="http://www.springframework.org/schema/jee"
-	xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
-	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:util="http://www.springframework.org/schema/util"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
     http://www.springframework.org/schema/context
     http://www.springframework.org/schema/context/spring-context-4.2.xsd
@@ -12,20 +12,20 @@
     http://www.springframework.org/schema/jee/spring-jee-4.2.xsd
     http://www.springframework.org/schema/mvc
     http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
-    http://www.springframework.org/schema/util 
+    http://www.springframework.org/schema/util
     http://www.springframework.org/schema/util/spring-util-4.1.xsd">
 
-	<context:annotation-config />
-	<context:component-scan base-package="com.ysq.test">
-		<context:exclude-filter type="annotation"
-			expression="org.springframework.stereotype.Service" />
-	</context:component-scan>
-	<bean id="fastJsonHttpMessageConverter" class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter" >
-        <property name= "supportedMediaTypes">
+    <context:annotation-config/>
+    <context:component-scan base-package="com.ysq.test">
+        <context:exclude-filter type="annotation"
+                                expression="org.springframework.stereotype.Service"/>
+    </context:component-scan>
+    <bean id="fastJsonHttpMessageConverter" class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+        <property name="supportedMediaTypes">
             <list>
-                <value>text/html;charset=UTF-8</value >
-                <value>text/plain;charset=UTF-8</value >
-                <value>application/json;charset=UTF-8</value >
+                <value>text/html;charset=UTF-8</value>
+                <value>text/plain;charset=UTF-8</value>
+                <value>application/json;charset=UTF-8</value>
             </list>
         </property>
         <!--   
@@ -36,48 +36,48 @@
     	WriteNullStringAsEmpty  字符类型字段如果为null,输出为"",而非null
     	WriteNullBooleanAsFalse  Boolean字段如果为null,输出为false,而非null -->
         <property name="features">
-			<array>
-			<value>QuoteFieldNames</value>
-			<value>WriteMapNullValue</value>
-			</array>
-		</property>
-    </bean >
-    <bean id="stringHttpMessageConverter" class="org.springframework.http.converter.StringHttpMessageConverter" >
-        <constructor-arg value= "UTF-8"/>
-        <property name= "supportedMediaTypes">
+            <array>
+                <value>QuoteFieldNames</value>
+                <value>WriteMapNullValue</value>
+            </array>
+        </property>
+    </bean>
+    <bean id="stringHttpMessageConverter" class="org.springframework.http.converter.StringHttpMessageConverter">
+        <constructor-arg value="UTF-8"/>
+        <property name="supportedMediaTypes">
             <list>
-                <value>text/html;charset=UTF-8</value >
-                <value>text/plain;charset=UTF-8</value >
+                <value>text/html;charset=UTF-8</value>
+                <value>text/plain;charset=UTF-8</value>
             </list>
         </property>
-    </bean >
-	<mvc:annotation-driven>
-		<!-- 解决中文乱码问题 -->
-		<mvc:message-converters register-defaults="true">
-			<ref bean= "stringHttpMessageConverter" />
-            <ref bean= "fastJsonHttpMessageConverter" />
-		</mvc:message-converters>
-	</mvc:annotation-driven>
-	<mvc:resources mapping="/styles/**" location="/styles/" />
-	<mvc:resources mapping="/scripts/**" location="/scripts/" />
-	<mvc:resources mapping="/images/**" location="/images/" />
-	<!--配置拦截器, 多个拦截器,顺序执行 -->
-	<mvc:interceptors>
-		<mvc:interceptor>
-			<!-- 匹配的是url路径， 如果不配置或/**,将拦截所有的Controller -->
-			<mvc:mapping path="/**"/> <!-- 过滤全部请求 --> 
-        	<mvc:exclude-mapping path="/login/**"/> <!-- 除了这个请求 -->
-			<bean class="com.ysq.test.interceptor.CommonInterceptor"></bean>
-		</mvc:interceptor>
-		<!-- 当设置多个拦截器时，先按顺序调用preHandle方法，然后逆序调用每个拦截器的postHandle和afterCompletion方法 -->
-	</mvc:interceptors>
-	<bean
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="prefix" value="/WEB-INF/views/" />
-		<property name="suffix" value=".jsp" />
-	</bean>
-	<bean id="multipartResolver"
-		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-		<property name="defaultEncoding" value="utf-8"></property>
-	</bean>
+    </bean>
+    <mvc:annotation-driven>
+        <!-- 解决中文乱码问题 -->
+        <mvc:message-converters register-defaults="true">
+            <ref bean="stringHttpMessageConverter"/>
+            <ref bean="fastJsonHttpMessageConverter"/>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+    <mvc:resources mapping="/styles/**" location="/styles/"/>
+    <mvc:resources mapping="/scripts/**" location="/scripts/"/>
+    <mvc:resources mapping="/images/**" location="/images/"/>
+    <!--配置拦截器, 多个拦截器,顺序执行 -->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <!-- 匹配的是url路径， 如果不配置或/**,将拦截所有的Controller -->
+            <mvc:mapping path="/**"/> <!-- 过滤全部请求 -->
+            <mvc:exclude-mapping path="/login/**"/> <!-- 除了这个请求 -->
+            <bean class="com.ysq.test.interceptor.CommonInterceptor"></bean>
+        </mvc:interceptor>
+        <!-- 当设置多个拦截器时，先按顺序调用preHandle方法，然后逆序调用每个拦截器的postHandle和afterCompletion方法 -->
+    </mvc:interceptors>
+    <bean
+            class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/views/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="utf-8"></property>
+    </bean>
 </beans>

@@ -47,7 +47,7 @@ public class CommonInterceptor extends HandlerInterceptorAdapter {
 			if (user != null) {
 				session = request.getSession();
 				session.setMaxInactiveInterval(14400);
-				session.setAttribute("userId", user.getId());
+//				session.setAttribute("userId", user.getId());
 				session.setAttribute("token", token);
 				SessionContext.getInstance().AddSession(token, session);
 				return true;
