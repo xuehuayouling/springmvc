@@ -16,7 +16,7 @@ public class Team {
     private String code;
     @Column(name = "name", nullable = false)
     private String name;
-    @Column(name = "parentCode")
+    @Column(name = "parent_code")
     private String parentCode;
     @ManyToMany(targetEntity = User.class)
     @JoinTable(name = "t_relation_user_team", joinColumns = @JoinColumn(name = "team_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
