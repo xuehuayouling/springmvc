@@ -2,17 +2,21 @@ package com.ysq.test.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
- * Created by ysq on 16/10/31.
+ * Created by ysq on 16/11/2.
  */
 @Entity
-@Table(name = "t_team", schema = "test", catalog = "")
-public class Team implements Serializable {
+@Table(name = "t_bam_menu", schema = "test", catalog = "")
+public class BamMenu implements Serializable {
     private String id;
     private String code;
     private String name;
     private String parentId;
+    private List<Role> roleList = new ArrayList<>();
 
     @Id
     @Column(name = "id", nullable = false, length = 32)
@@ -54,12 +58,24 @@ public class Team implements Serializable {
         this.parentId = parentId;
     }
 
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, targetEntity = Role.class)
+    @JoinTable(name = "t_relation_role_bam_menu",
+            joinColumns = {@JoinColumn(name = "bam_menu_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})
+    public List<Role> getRoleList() {
+        return roleList;
+    }
+
+    public void setRoleList(List<Role> roleList) {
+        this.roleList = roleList;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Team that = (Team) o;
+        BamMenu that = (BamMenu) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (code != null ? !code.equals(that.code) : that.code != null) return false;
@@ -77,4 +93,5 @@ public class Team implements Serializable {
         result = 31 * result + (parentId != null ? parentId.hashCode() : 0);
         return result;
     }
+
 }

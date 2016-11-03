@@ -1,65 +1,52 @@
 package com.ysq.test.dao;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
+import com.ysq.test.entity.BamMenu;
+import com.ysq.test.entity.Team;
 import com.ysq.test.entity.User;
 import com.ysq.test.util.TextUtil;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Repository
-public class UserDAO {
+public class UserDAO extends EntityDao<User> {
 
-	@Autowired
-	private SessionFactory sessionFactory;
+    public User addToken(User user, String sessionID) {
+        if (user != null) {
+            user.setToken(sessionID);
+            saveOrUpdate(user);
+            return user;
+        }
+        return null;
+    }
 
-	public User findUser(String name, String password) {
-		if (TextUtil.isEmpty(name) || TextUtil.isEmpty(password)) {
-			return null;
-		}
-		String sql = "from t_user where name='%s' and password='%s'";
-		sql = String.format(sql, name, password);
-		return queryUserBySql(sql);
-	}
-	
-	public User addToken(User user, String sessionID) {
-		if (user != null) {
-			Session session = getCurrentSession();
-			user.setToken(sessionID);
-			session.saveOrUpdate(user);
-			session.flush();
-			session.clear();
-			return user;
-		}
-		return null;
-	}
+    public User queryByName(String name) {
+        if (TextUtil.isEmpty(name)) {
+            return null;
+        }
+        String sql = " from User u where u.name=:name";
+        return (User) getSession().createQuery(sql).setParameter("name", name).uniqueResult();
+    }
 
-	public User findUserByAccessToken(String token) {
-		if (TextUtil.isEmpty(token)) {
-			return null;
-		}
-		String sql = "from t_user where token='%s'";
-		sql = String.format(sql, token);
-		return queryUserBySql(sql);
-	}
-	
-	private User queryUserBySql(String sql) {
-		Session session = getCurrentSession();
-		Query query = session.createQuery(sql);
-		if (query.list().size() > 0) {
-			User user = (User) query.list().get(0);
-			return user;
-		}
-		return null;
-	}
+    public User queryByNameAndPassword(String name, String password) {
+        if (TextUtil.isEmpty(name)) {
+            return null;
+        }
+        String sql = " from User u where u.name=:name and u.password=:password";
+        return (User) getSession().createQuery(sql).setParameter("name", name).setParameter("password", password).uniqueResult();
+    }
 
-	private Session getCurrentSession() {
-		return sessionFactory.getCurrentSession();
-	}
+    public User queryByToken(String token) {
+        if (TextUtil.isEmpty(token)) {
+            return null;
+        }
+        String sql = " from User u where u.token=:token";
+        return (User) getSession().createQuery(sql).setParameter("token", token).uniqueResult();
+    }
 
-	public void add(User user) {
-		getCurrentSession().save(user);
-	}
 }

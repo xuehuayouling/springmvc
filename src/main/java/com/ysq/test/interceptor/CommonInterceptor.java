@@ -43,7 +43,7 @@ public class CommonInterceptor extends HandlerInterceptorAdapter {
 			session.setMaxInactiveInterval(14400);
 			return true;
 		} else {// 不存在去数据库查找
-			User user = service.findUserByAccessToken(token);
+			User user = service.queryByToken(token);
 			if (user != null) {
 				session = request.getSession();
 				session.setMaxInactiveInterval(14400);

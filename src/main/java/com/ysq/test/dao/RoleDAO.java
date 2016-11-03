@@ -3,29 +3,19 @@ package com.ysq.test.dao;
 import com.ysq.test.entity.Role;
 import com.ysq.test.entity.User;
 import com.ysq.test.util.TextUtil;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Created by ysq on 16/10/31.
+ */
 @Repository
-public class RoleDAO {
+public class RoleDAO extends EntityDao<Role> {
 
-	@Autowired
-	private SessionFactory sessionFactory;
-
-	public Role queryById(long id) {
-		Session session = getCurrentSession();
-		Role role = (Role) session.get(Role.class, id);
-		return role;
-	}
-
-	private Session getCurrentSession() {
-		return sessionFactory.getCurrentSession();
-	}
-
-	public void add(Role role) {
-		getCurrentSession().save(role);
-	}
+    public Role queryByName(String name) {
+        if (TextUtil.isEmpty(name)) {
+            return null;
+        }
+        String sql = " from Role r where r.name=:name";
+        return (Role) getSession().createQuery(sql).setParameter("name", name).uniqueResult();
+    }
 }

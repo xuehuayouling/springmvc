@@ -66,6 +66,12 @@
         </property>
     </bean>
 
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <constructor-arg>
+            <ref bean="dataSource" />
+        </constructor-arg>
+    </bean>
+
     <!-- 数据库映射 -->
     <!-- class="org.apache.tomcat.dbcp.dbcp.BasicDataSource" -->
     <!-- class="org.springframework.jdbc.datasource.DriverManagerDataSource" -->

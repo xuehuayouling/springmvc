@@ -1,38 +1,29 @@
 package com.ysq.test.entity;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.io.Serializable;
 
 /**
- * Created by ysq on 16/10/25.
+ * Created by ysq on 16/10/31.
  */
 @Entity
-@Table(name = "t_role")
-public class Role {
+@Table(name = "t_role", schema = "test", catalog = "")
+public class Role implements Serializable {
+    private String id;
+    private String name;
 
     @Id
-    @Basic(optional = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private long id;
-    @Column(name = "name", nullable = false)
-    private String name;
-    @ManyToMany(targetEntity = User.class)
-    @JoinTable(name = "t_relation_role_user", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
-    Set<User> users = new HashSet<>();
-    @ManyToMany(targetEntity = Team.class)
-    @JoinTable(name = "t_relation_role_team", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "team_id"))
-    Set<Team> teams = new HashSet<>();
-
-    public long getId() {
+    @Column(name = "id", nullable = false, length = 32)
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
+    @Basic
+    @Column(name = "name", nullable = false, length = 255)
     public String getName() {
         return name;
     }
@@ -41,19 +32,23 @@ public class Role {
         this.name = name;
     }
 
-    public Set<User> getUsers() {
-        return users;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Role that = (Role) o;
+
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+
+        return true;
     }
 
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
-
-    public Set<Team> getTeams() {
-        return teams;
-    }
-
-    public void setTeams(Set<Team> teams) {
-        this.teams = teams;
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        return result;
     }
 }
