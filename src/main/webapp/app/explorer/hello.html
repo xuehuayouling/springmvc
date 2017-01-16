@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <base id="base" href="/springmvc/" />
+    <script>
+        window.result = '${result}';
+    </script>
+</head>
+<body>
+    <div>测试结果：<span id="test"></span></div>
+    <script src="modules/seajs/sea-debug.js"></script>
+    <script src="modules/main.js"></script>
+    <script src="modules/jquery/jquery-3.1.1.js"></script>
+    <script>
+        seajs.use("modulePath/explorer/hello", function(pageJs) {
+            pageJs.Initialize();
+        });
+    </script>
+</body>
+</html>
